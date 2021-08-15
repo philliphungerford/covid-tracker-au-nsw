@@ -87,17 +87,7 @@ ui <- dashboardPage(
       #-----------------------------------------------------------------
       # TAB 1: Overview
       tabItem(tabName = "overview",
-              h1("Today"),
-              fluidRow(
-              
-                valueBox(
-                value = date(),
-                "Current",
-                icon = icon("calendar-o"),
-                color = "blue"),
-              
-                ),
-              
+
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("Overview"),
               # Info boxes for Overview
