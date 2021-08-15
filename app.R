@@ -87,11 +87,28 @@ ui <- dashboardPage(
       #-----------------------------------------------------------------
       # TAB 1: Overview
       tabItem(tabName = "overview",
-              h1("Overview"),
+              h1("Today"),
+              fluidRow(
+              
+                valueBox(
+                value = date(),
+                "Current",
+                icon = icon("calendar-o"),
+                color = "blue"),
+              
+                ),
               
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              h1("Overview"),
               # Info boxes for Overview
               fluidRow(                
+                
+                valueBox(
+                  value =  format(date_latest, "%a %b %d"),
+                  "Date updated",
+                  icon = icon("calendar-o"),
+                  color = "blue"),
+                
                 # Participants = 1514
                 valueBox(
                   value = sum(df$num_new_cases[which(df$date >= date_earliest)]),
@@ -103,9 +120,17 @@ ui <- dashboardPage(
                   value = df$doses_cum[df$date == date_latest],
                   "Cumulative Doses",
                   icon = icon("male"),
-                  color = "green")),
+                  color = "green"),
               
-              h1("Past 24hrs from 8pm last night:"),
+              # Tests
+              valueBox(
+                value = df$total_tests[df$date == date_latest],
+                "Total tests",
+                icon = icon("male"),
+                color = "green")),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              
+                h1("Past 24hrs from 8pm last night:"),
               fluidRow(
                 
                 # New Cases
@@ -125,35 +150,29 @@ ui <- dashboardPage(
                 # In hospital
                 valueBox(
                   value = df$hospitalised[df$date == date_latest],
-                  "In hospital",
+                  "Currently in hospital",
                   icon = icon("line-chart"),
                   color = "orange"),
                 
                 # ICU
                 valueBox(
                   value = df$deaths[df$date == date_latest],
-                  "Deaths",
+                  "Total deaths",
                   icon = icon("line-chart"),
                   color = "red"),
                 
                 # ICU
                 valueBox(
                   value = df$icu[df$date == date_latest],
-                  "ICU",
+                  "Currently in ICU",
                   icon = icon("line-chart"),
                   color = "orange"),
-                
-                # Tests
-                valueBox(
-                  value = df$total_tests[df$date == date_latest],
-                  "Total tests",
-                  icon = icon("male"),
-                  color = "green"),
+
                 
                 # Tests
                 valueBox(
                   value = df$doses_24hr[df$date == date_latest],
-                  "Doses",
+                  "Doses administered",
                   icon = icon("male"),
                   color = "green")
               ),
