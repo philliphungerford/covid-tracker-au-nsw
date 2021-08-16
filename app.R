@@ -91,15 +91,24 @@ ui <- dashboardPage(
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("Overview"),
               # Info boxes for Overview
-              fluidRow(                
-                
+              fluidRow(
                 valueBox(
                   value =  format(date_latest, "%a %b %d"),
                   "Date updated",
                   icon = icon("calendar-o"),
                   color = "blue"),
+              ),
+              fluidRow(                
                 
-                # Participants = 1514
+                # Total Cases
+                valueBox(
+                  value = sum(df$total_cases[which(df$date == date_latest)]),
+                  "Total COVID cases since pandemic",
+                  icon = icon("male"),
+                  color = "red"),
+
+    
+                # Total in past 14 days
                 valueBox(
                   value = sum(df$num_new_cases[which(df$date >= date_earliest)]),
                   "Total cases in past 14 days",
