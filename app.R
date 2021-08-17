@@ -92,7 +92,7 @@ ui <- dashboardPage(
               h1("COVID-19 Tracker NSW"),
               p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is sourced from", a("NSW Health.", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx")),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              h1("Overview"),
+              h1("Date"),
               # Info boxes for Overview
               # DATE
               fluidRow(
@@ -103,6 +103,7 @@ ui <- dashboardPage(
                   color = "blue"),
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              h1("Overview"),
               # CASE NUMBERS (RED)
               fluidRow(                
                 column(12),
@@ -208,32 +209,27 @@ ui <- dashboardPage(
               h2("Graphs"),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               
-              fluidRow(
-              column(12),
-                plotOutput("graph_1")
-              ),
-              
               # Input: Selector for variable to plot against mpg ----
-              selectInput(inputId = "variable",
+              checkboxGroupInput(inputId = "variable",
                           label = "Variable:", 
                           choices = 
-                            c("New Cases" = "Num New Cases",
-                              "Overseas Acquired" = "Overseas Acquired",
-                              "Tests" = "Tests 24hrs",
+                            list("New Cases (24hrs)" = "Num New Cases",
+                              "Overseas Acquired (24hrs)" = "Overseas Acquired",
+                              "Tests (24hrs)" = "Tests 24hrs",
                               "Hospitalised" = "Hospitalised",
-                              "ICU" = "Icu",
+                              "In ICU" = "Icu",
                               "Deaths" = "Deaths",
-                              "Infectious" = "Infectious 24hrs",
-                              "Linked to clust" = "Linked Cluster",
-                              "Household contact" = "Contact Household",
-                              "Close contact" = "Contact Close")),
-              
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                              "Infectious in the community" = "Infectious 24hrs",
+                              "Linked to known cluster" = "Linked Cluster",
+                              "Household contacts" = "Contact Household",
+                              "Close contacts" = "Contact Close"),
+                          selected = "Num New Cases"),
               fluidRow(
                 column(12),
-                  plotOutput("graph_2"))
-              
-      ),
+                plotOutput("graph_1")
+              ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
           
       #-----------------------------------------------------------------
       # TAB 13: Acknowledgements
@@ -250,7 +246,7 @@ ui <- dashboardPage(
   #=========================================================================
   # END DASHBOARD
   #=========================================================================
-) # dashboard page
+)) # dashboard page
 
 ##############################################################################
 # TAB 2: SERVER
@@ -268,7 +264,7 @@ server <- function(input, output) {
   
   output$graph_1 <- renderPlot({
     
-    tmp_vars <- as.character(unique(df_plot$variable)[c(1,2,7,8,9,10)])
+    tmp_vars <- input$variable
     tmp <- df_plot[df_plot$variable %in% tmp_vars,]
       ggplot(data = tmp, aes(x = Date, y = value, color = variable)) + 
       geom_line(size=size_line) +
@@ -281,19 +277,6 @@ server <- function(input, output) {
     
   })
   
-  output$graph_2 <- renderPlot({
-    tmp <- df_plot[which(df_plot$variable == input$variable), ]
-    
-    ggplot(data = tmp, aes(x = Date, y = value, color=variable)) + 
-      geom_line(size=size_line) + 
-      geom_point(size=size_point) +
-      scale_x_date(date_labels="%d %b",date_breaks  ="1 day") + 
-      labs(x = "Date",
-           y = input$variable) +
-      theme(legend.position = "right") +
-      theme_bw()
-    
-  })
   #=========================================================================
   # End server
   #=========================================================================
