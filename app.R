@@ -150,18 +150,41 @@ ui <- dashboardPage(
                 # Tests
                 valueBox(
                   value = comma(df$doses_1st_24hr[df$date == date_latest]),
-                  "First Dose administered",
+                  "First Dose administered in 24hrs",
                   icon = icon("medkit"),
                   color = "green"),
                 # Tests
                 valueBox(
                   value = comma(df$doses_2nd_24hr[df$date == date_latest]),
-                  "Second Dose administered",
+                  "Second Dose administered in 24hrs",
                   icon = icon("medkit"),
                   color = "green"),
                 
                 valueBox(
                   value = comma(df$doses_total_24hr[df$date == date_latest]),
+                  "Total Doses administered in 24hrs",
+                  icon = icon("medkit"),
+                  color = "green")
+              ),
+              # CUMULATIVE DOSES
+              fluidRow(
+                column(12),
+                ## DOSES
+                # Tests
+                valueBox(
+                  value = comma(df$doses_1st_cum[df$date == date_latest]),
+                  "First Dose administered",
+                  icon = icon("medkit"),
+                  color = "green"),
+                # Tests
+                valueBox(
+                  value = comma(df$doses_2nd_cum[df$date == date_latest]),
+                  "Second Dose administered",
+                  icon = icon("medkit"),
+                  color = "green"),
+                
+                valueBox(
+                  value = comma(df$doses_cum[df$date == date_latest]),
                   "Total Doses administered",
                   icon = icon("medkit"),
                   color = "green")
