@@ -266,8 +266,7 @@ ui <- dashboardPage(
               h2("Information"),
               p("Made by Phillip Hungerford"),
               br(),
-              p("For more details visit my: ", a("github", href="https://github.com/philliphungerford/covid-tracker-au-nsw")),
-              p("Checkout my ", a("wesbite", href="https://philliphungerford.github.io"))
+              p("For more details visit my:", a("wesbite", href="https://philliphungerford.github.io"))
       )
       #-----------------------------------------------------------------
     ) # tabItems
