@@ -247,7 +247,7 @@ ui <- dashboardPage(
                                  selected = "Num New Cases"),
               # Pass in Date objects
               dateRangeInput("dateRange", "Date range:",
-                             start = date_latest-7,
+                             start = date_latest-6,
                              end = date_latest,
                              min = "2021-08-01",
                              max = date_latest),
@@ -256,7 +256,11 @@ ui <- dashboardPage(
               fluidRow(
                 column(12),
                 plotOutput("graph_1")
-              )),
+              ),
+              p("Made by Phillip Hungerford"),
+              p("For more details visit my:", a("website", href="https://philliphungerford.github.io")),
+              p("If you would like to make a request, email me on phillip.hungerford@gmail.com")
+              ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
           
@@ -266,7 +270,8 @@ ui <- dashboardPage(
               h2("Information"),
               p("Made by Phillip Hungerford"),
               br(),
-              p("For more details visit my:", a("wesbite", href="https://philliphungerford.github.io"))
+              p("For more details visit my:", a("website", href="https://philliphungerford.github.io")),
+              p("If you would like to make a request, email me on phillip.hungerford@gmail.com")
       )
       #-----------------------------------------------------------------
     ) # tabItems
