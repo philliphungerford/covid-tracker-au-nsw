@@ -89,9 +89,11 @@ ui <- dashboardPage(
       tabItem(tabName = "overview",
 
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              h1("COVID-19 Tracker NSW"),
+              p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is sourced from", a("NSW Health.", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx")),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("Overview"),
               # Info boxes for Overview
-              
               # DATE
               fluidRow(
                 valueBox(
