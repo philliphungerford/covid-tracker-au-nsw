@@ -114,32 +114,55 @@ ui <- dashboardPage(
                   icon = icon("male"),
                   color = "red"),
 
-    
                 # Total in past 14 days
                 valueBox(
                   value = comma(sum(df$num_new_cases[which(df$date >= date_earliest)])),
                   "Total cases in past 14 days",
                   icon = icon("male"),
                   color = "red")
+
+                
                 ),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              
-              # DOSES & TESTS (GREEN)
               fluidRow(
                 column(12),
-                
-                # CUM DOSES
+                # TOTAL DEATHS
                 valueBox(
-                  value = comma(df$doses_cum[df$date == date_latest]),
-                  "Cumulative Doses",
-                  icon = icon("medkit"),
-                  color = "green"),
+                  value = df$deaths[df$date == date_latest],
+                  "Total deaths",
+                  icon = icon("bed"),
+                  color = "orange"),
                 
                 # Tests
                 valueBox(
                   value = comma(df$total_tests[df$date == date_latest]),
                   "Total tests",
                   icon = icon("thermometer"),
+                  color = "orange")
+              ),
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              
+              h1("Vaccinations"),
+              fluidRow(
+                column(12),
+                ## DOSES
+                # Tests
+                valueBox(
+                  value = comma(df$doses_1st_24hr[df$date == date_latest]),
+                  "First Dose administered",
+                  icon = icon("medkit"),
+                  color = "green"),
+                # Tests
+                valueBox(
+                  value = comma(df$doses_2nd_24hr[df$date == date_latest]),
+                  "Second Dose administered",
+                  icon = icon("medkit"),
+                  color = "green"),
+                
+                valueBox(
+                  value = comma(df$doses_total_24hr[df$date == date_latest]),
+                  "Total Doses administered",
+                  icon = icon("medkit"),
                   color = "green")
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,23 +183,17 @@ ui <- dashboardPage(
                   value = df$infectious_24hrs[df$date == date_latest],
                   "Infectious in the community",
                   icon = icon("map"),
-                  color = "red"),
-                
+                  color = "red")
+              
+              ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              fluidRow(
+                column(12),
                 # In hospital
                 valueBox(
                   value = df$hospitalised[df$date == date_latest],
                   "Currently in hospital",
                   icon = icon("hospital-o"),
-                  color = "red")
-              ),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              fluidRow(
-                column(12),
-                # ICU
-                valueBox(
-                  value = df$deaths[df$date == date_latest],
-                  "Total deaths",
-                  icon = icon("bed"),
                   color = "orange"),
                 
                 # ICU
@@ -184,14 +201,6 @@ ui <- dashboardPage(
                   value = df$icu[df$date == date_latest],
                   "Currently in ICU",
                   icon = icon("heartbeat"),
-                  color = "orange"),
-                
-                
-                # Tests
-                valueBox(
-                  value = comma(df$doses_24hr[df$date == date_latest]),
-                  "Doses administered",
-                  icon = icon("medkit"),
                   color = "orange")
               ),
             
