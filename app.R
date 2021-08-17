@@ -30,7 +30,7 @@ library(data.table)
 library(reshape2)
 library(tools)
 library(tidyverse)
-
+library(scales) # add comma to output
 
 ##############################################################################
 # load data
@@ -91,6 +91,8 @@ ui <- dashboardPage(
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("Overview"),
               # Info boxes for Overview
+              
+              # DATE
               fluidRow(
                 valueBox(
                   value =  format(date_latest, "%a %b %d"),
@@ -98,11 +100,14 @@ ui <- dashboardPage(
                   icon = icon("calendar-o"),
                   color = "blue"),
               ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              # CASE NUMBERS (RED)
               fluidRow(                
+                column(12),
                 
                 # Total Cases
                 valueBox(
-                  value = sum(df$total_cases[which(df$date == date_latest)]),
+                  value = comma(sum(df$total_cases[which(df$date == date_latest)])),
                   "Total COVID cases since pandemic",
                   icon = icon("male"),
                   color = "red"),
@@ -110,72 +115,83 @@ ui <- dashboardPage(
     
                 # Total in past 14 days
                 valueBox(
-                  value = sum(df$num_new_cases[which(df$date >= date_earliest)]),
+                  value = comma(sum(df$num_new_cases[which(df$date >= date_earliest)])),
                   "Total cases in past 14 days",
                   icon = icon("male"),
                   color = "red"),
-                
-                valueBox(
-                  value = df$doses_cum[df$date == date_latest],
-                  "Cumulative Doses",
-                  icon = icon("male"),
-                  color = "green"),
-              
-              # Tests
-              valueBox(
-                value = df$total_tests[df$date == date_latest],
-                "Total tests",
-                icon = icon("male"),
-                color = "green")),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               
-                h1("Past 24hrs from 8pm last night:"),
+              # DOSES & TESTS (GREEN)
               fluidRow(
+                column(12),
                 
+                # CUM DOSES
+                valueBox(
+                  value = comma(df$doses_cum[df$date == date_latest]),
+                  "Cumulative Doses",
+                  icon = icon("medkit"),
+                  color = "green"),
+                
+                # Tests
+                valueBox(
+                  value = comma(df$total_tests[df$date == date_latest]),
+                  "Total tests",
+                  icon = icon("thermometer"),
+                  color = "green")),
+              ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                h1("Past 24hrs from 8pm last night:"),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              # 2 rows of 3 
+              fluidRow(
+                column(12),
                 # New Cases
                 valueBox(
                   value = df$num_new_cases[df$date == date_latest],
                   "New Cases",
-                  icon = icon("line-chart"),
-                  color = "orange"),
+                  icon = icon("male"),
+                  color = "red"),
                 
                 # Infectious
                 valueBox(
                   value = df$infectious_24hrs[df$date == date_latest],
                   "Infectious in the community",
-                  icon = icon("line-chart"),
+                  icon = icon("map"),
                   color = "red"),
                 
                 # In hospital
                 valueBox(
                   value = df$hospitalised[df$date == date_latest],
                   "Currently in hospital",
-                  icon = icon("line-chart"),
-                  color = "orange"),
-                
+                  icon = icon("hospital-o"),
+                  color = "red")
+              ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              fluidRow(
+                column(12),
                 # ICU
                 valueBox(
                   value = df$deaths[df$date == date_latest],
                   "Total deaths",
-                  icon = icon("line-chart"),
-                  color = "red"),
+                  icon = icon("bed"),
+                  color = "orange"),
                 
                 # ICU
                 valueBox(
                   value = df$icu[df$date == date_latest],
                   "Currently in ICU",
-                  icon = icon("line-chart"),
+                  icon = icon("heartbeat"),
                   color = "orange"),
-
+                
                 
                 # Tests
                 valueBox(
-                  value = df$doses_24hr[df$date == date_latest],
+                  value = comma(df$doses_24hr[df$date == date_latest]),
                   "Doses administered",
-                  icon = icon("male"),
-                  color = "green")
+                  icon = icon("medkit"),
+                  color = "orange")
               ),
-              
+            
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h2("Graphs"),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -200,7 +216,7 @@ ui <- dashboardPage(
                               "Household contact" = "Contact Household",
                               "Close contact" = "Contact Close")),
               
-              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               fluidRow(
                 column(12),
                   plotOutput("graph_2"))
