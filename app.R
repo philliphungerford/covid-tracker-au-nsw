@@ -100,6 +100,11 @@ ui <- dashboardPage(
                   "Date updated",
                   icon = icon("calendar-o"),
                   color = "blue"),
+                valueBox(
+                  value =  date_latest - as.Date("2021-06-25"),
+                  "Days since June 25th lockdown",
+                  icon = icon("calendar-o"),
+                  color = "blue")
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("Overview"),
