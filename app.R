@@ -231,26 +231,27 @@ ui <- dashboardPage(
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h2("Trends"),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              
               # Input: Selector for variable to plot against mpg ----
               checkboxGroupInput(inputId = "variable",
-                          label = "Variable:", 
-                          choices = 
-                            list("New Cases (24hrs)" = "Num New Cases",
-                              "Overseas Acquired (24hrs)" = "Overseas Acquired",
-                              "Tests (24hrs)" = "Tests 24hrs",
-                              "Hospitalised" = "Hospitalised",
-                              "In ICU" = "Icu",
-                              "Deaths" = "Deaths",
-                              "Infectious in the community" = "Infectious 24hrs",
-                              "Linked to known cluster" = "Linked Cluster",
-                              "Household contacts" = "Contact Household",
-                              "Close contacts" = "Contact Close"),
-                          selected = "Num New Cases"),
+                                 label = "Variable:", 
+                                 choices = 
+                                   list("New Cases" = "Num New Cases",
+                                        "Overseas Acquired" = "Overseas Acquired",
+                                        "Tests" = "Tests 24hrs",
+                                        "Hospitalised" = "Hospitalised",
+                                        "In ICU" = "Icu",
+                                        "Deaths" = "Deaths",
+                                        "Infectious in the community" = "Infectious 24hrs",
+                                        "Linked to known cluster" = "Linked Cluster",
+                                        "Household contacts" = "Contact Household",
+                                        "Close contacts" = "Contact Close"),
+                                 selected = "Num New Cases"),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              # Show plot 
               fluidRow(
                 column(12),
                 plotOutput("graph_1")
-              ),
+              )),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
           
@@ -269,7 +270,7 @@ ui <- dashboardPage(
   #=========================================================================
   # END DASHBOARD
   #=========================================================================
-)) # dashboard page
+) # dashboard page
 
 ##############################################################################
 # TAB 2: SERVER
