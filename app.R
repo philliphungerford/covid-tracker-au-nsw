@@ -128,6 +128,26 @@ ui <- dashboardPage(
 
                 
                 ),
+              
+              # VACCINATIONS
+              fluidRow(
+                column(12),
+                # TOTAL DEATHS
+                valueBox(
+                  value = comma(df$doses_total_NSW[df$date == date_latest]),
+                  "Total Vaccinations in NSW",
+                  icon = icon("male"),
+                  color = "green"),
+                
+                # Tests
+                valueBox(
+                  value = paste0(round((((df$doses_total_NSW[df$date == date_latest])/10000000)*100),0),"%"),
+                  "Percent of 10 million goal",
+                  icon = icon("map"),
+                  color = "green")
+              ),
+              
+              # DEATHS & HOSPITALISED
               fluidRow(
                 column(12),
                 # TOTAL DEATHS
@@ -144,10 +164,12 @@ ui <- dashboardPage(
                   icon = icon("thermometer"),
                   color = "orange")
               ),
+
               
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               
               h1("Vaccinations"),
+              p("These are vaccinations administered by NSW Health"),
               fluidRow(
                 column(12),
                 ## DOSES
@@ -188,7 +210,7 @@ ui <- dashboardPage(
                   color = "green"),
                 
                 valueBox(
-                  value = comma(df$doses_cum[df$date == date_latest]),
+                  value = comma(df$doses_total_GP_cum[df$date == date_latest]),
                   "Total Doses administered",
                   icon = icon("medkit"),
                   color = "green")
