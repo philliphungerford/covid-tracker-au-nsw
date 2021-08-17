@@ -206,7 +206,7 @@ ui <- dashboardPage(
               ),
             
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              h2("Graphs"),
+              h2("Trends"),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               
               # Input: Selector for variable to plot against mpg ----
