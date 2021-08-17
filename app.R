@@ -120,7 +120,8 @@ ui <- dashboardPage(
                   value = comma(sum(df$num_new_cases[which(df$date >= date_earliest)])),
                   "Total cases in past 14 days",
                   icon = icon("male"),
-                  color = "red"),
+                  color = "red")
+                ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               
               # DOSES & TESTS (GREEN)
@@ -139,7 +140,7 @@ ui <- dashboardPage(
                   value = comma(df$total_tests[df$date == date_latest]),
                   "Total tests",
                   icon = icon("thermometer"),
-                  color = "green")),
+                  color = "green")
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 h1("Past 24hrs from 8pm last night:"),
