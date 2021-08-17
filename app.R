@@ -31,7 +31,6 @@ library(reshape2)
 library(tools)
 library(tidyverse)
 library(scales) # add comma to output
-
 ##############################################################################
 # load data
 df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
@@ -55,7 +54,7 @@ df_plot$value <- as.integer(df_plot$value)
 
 # configuration
 df_vars <- colnames(df)
-size_line=2
+size_line=1
 size_point=2
 ##############################################################################
 # functions for plots
@@ -246,6 +245,12 @@ ui <- dashboardPage(
                                         "Household contacts" = "Contact Household",
                                         "Close contacts" = "Contact Close"),
                                  selected = "Num New Cases"),
+              # Pass in Date objects
+              dateRangeInput("dateRange", "Date range:",
+                             start = date_latest-7,
+                             end = date_latest,
+                             min = "2021-08-01",
+                             max = date_latest),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               # Show plot 
               fluidRow(
@@ -289,17 +294,29 @@ server <- function(input, output) {
   output$graph_1 <- renderPlot({
     
     tmp_vars <- input$variable
+    
+    # select variables that have been checked in box
     tmp <- df_plot[df_plot$variable %in% tmp_vars,]
-      ggplot(data = tmp, aes(x = Date, y = value, color = variable)) + 
+    
+    # filter data by date
+    tmp <- tmp %>% filter(Date >= input$dateRange[1] & Date <= input$dateRange[2])
+    
+    # generate plot
+    ggplot(data = tmp, aes(x = Date, y = value, color = variable)) + 
       geom_line(size=size_line) +
       geom_point(size=size_point) +
       scale_x_date(date_labels="%d %b",date_breaks  ="1 day") + 
       labs(x = "Date",
-           y = "Number of Cases") + 
-      theme(legend.position = "right") +
-    theme_bw() 
+           y = "Number of Cases",
+           title="") + 
+      scale_color_brewer(palette = "BuPu") +
+      theme_dark() +
+      theme(legend.position = "bottom",
+            legend.title=element_blank())
+
     
   })
+  
   
   #=========================================================================
   # End server
