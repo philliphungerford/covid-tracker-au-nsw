@@ -284,6 +284,7 @@ ui <- dashboardPage(
                 column(12),
                 plotOutput("graph_1")
               ),
+              br(),
               p("Made by Phillip Hungerford"),
               p("For more details visit my:", a("website", href="https://philliphungerford.github.io")),
               p("If you would like to make a request, email me on phillip.hungerford@gmail.com")
