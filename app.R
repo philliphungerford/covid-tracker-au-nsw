@@ -210,7 +210,7 @@ ui <- dashboardPage(
                   color = "green"),
                 
                 valueBox(
-                  value = comma(df$doses_total_GP_cum[df$date == date_latest]),
+                  value = comma(df$doses_total_nswHealth_cum[df$date == date_latest]),
                   "Total Doses administered",
                   icon = icon("medkit"),
                   color = "green")
