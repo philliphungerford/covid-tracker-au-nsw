@@ -54,8 +54,8 @@ df_plot$value <- as.integer(df_plot$value)
 
 # configuration
 df_vars <- colnames(df)
-size_line=1
-size_point=2
+size_line=2
+size_point=4
 ##############################################################################
 # functions for plots
 #source("functions/utilities.R")
@@ -341,8 +341,8 @@ server <- function(input, output) {
       labs(x = "Date",
            y = "Number of Cases",
            title="") + 
-      scale_color_brewer(palette = "BuPu") +
-      theme_dark() +
+      scale_color_brewer(palette = "Set1") +
+      theme_light() +
       theme(legend.position = "bottom",
             legend.title=element_blank())
 
