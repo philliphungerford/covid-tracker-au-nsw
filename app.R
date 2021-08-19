@@ -47,10 +47,13 @@ names(df_plot) <- new
 ## TIDY DATA
 # date, variable, value
 df_plot <- reshape2::melt(df_plot, id.var = "Date")
-
 df_plot$Date <- as.Date(df_plot$Date, format = "%Y-%m-%d")
 df_plot$variable <- as.factor(df_plot$variable)
 df_plot$value <- as.integer(df_plot$value)
+
+# vaccine increase from previous date
+vaccinations_today <- df$doses_total_NSW[df$date == date_latest]
+vaccinations_yesterday <- df$doses_total_NSW[df$date == date_latest-1]
 
 # configuration
 df_vars <- colnames(df)
@@ -114,7 +117,7 @@ ui <- dashboardPage(
                 
                 # Total Cases
                 valueBox(
-                  value = comma(sum(df$total_cases[which(df$date == date_latest)])),
+                  value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
                   "Total COVID cases since pandemic",
                   icon = icon("male"),
                   color = "red"),
@@ -132,11 +135,18 @@ ui <- dashboardPage(
               # VACCINATIONS
               fluidRow(
                 column(12),
-                # TOTAL DEATHS
+                # TOTAL VACCINATIONS NSW
                 valueBox(
                   value = comma(df$doses_total_NSW[df$date == date_latest]),
                   "Total Vaccinations in NSW",
                   icon = icon("male"),
+                  color = "green"),
+                
+                # INCREASE IN VAC FROM PREVIOUS DAY
+                valueBox(
+                  value = comma(vaccinations_today - vaccinations_yesterday),
+                  "Difference in vaccines from yesterday",
+                  icon = icon("line-chart"),
                   color = "green"),
                 
                 # Tests
@@ -154,7 +164,7 @@ ui <- dashboardPage(
                 valueBox(
                   value = df$deaths[df$date == date_latest],
                   "Total deaths",
-                  icon = icon("bed"),
+                  icon = icon("user-times"),
                   color = "orange"),
                 
                 # Tests
@@ -195,13 +205,16 @@ ui <- dashboardPage(
               # CUMULATIVE DOSES
               fluidRow(
                 column(12),
+                
                 ## DOSES
+                
                 # Tests
                 valueBox(
                   value = comma(df$doses_1st_cum[df$date == date_latest]),
                   "First Dose administered",
                   icon = icon("medkit"),
                   color = "green"),
+                
                 # Tests
                 valueBox(
                   value = comma(df$doses_2nd_cum[df$date == date_latest]),
@@ -250,6 +263,13 @@ ui <- dashboardPage(
                 valueBox(
                   value = df$icu[df$date == date_latest],
                   "Currently in ICU",
+                  icon = icon("bed"),
+                  color = "orange"),
+                
+                # Ventilator
+                valueBox(
+                  value = df$ventilator[df$date == date_latest],
+                  "Currently on a ventilator",
                   icon = icon("heartbeat"),
                   color = "orange")
               ),
@@ -261,16 +281,23 @@ ui <- dashboardPage(
               checkboxGroupInput(inputId = "variable",
                                  label = "Variable:", 
                                  choices = 
-                                   list("New Cases" = "Num New Cases",
-                                        "Overseas Acquired" = "Overseas Acquired",
-                                        "Tests" = "Tests 24hrs",
-                                        "Hospitalised" = "Hospitalised",
-                                        "In ICU" = "Icu",
-                                        "Deaths" = "Deaths",
+                                   list("Total Cases (Jan 25 2020)" = "Cases 20200125",
+                                        "Total Tests" = "Total Tests",
+                                        "Vaccinations (NSW)" = "Doses Total NSW",
+                                        "First dose (NSW Health)" = "Doses 1st 24hr",
+                                        "Second dose (NSW Health)" = "Doses 2nd 24hr",
+                                        "New Cases" = "Num New Cases",
                                         "Infectious in the community" = "Infectious 24hrs",
                                         "Linked to known cluster" = "Linked Cluster",
                                         "Household contacts" = "Contact Household",
-                                        "Close contacts" = "Contact Close"),
+                                        "Close contacts" = "Contact Close",
+                                        
+                                        "Tests" = "Tests 24hrs",
+                                        "Overseas Acquired" = "Overseas Acquired",
+                                        "Deaths" = "Deaths",
+                                        "Hospitalised" = "Hospitalised",
+                                        "In ICU" = "Icu"
+                                        ),
                                  selected = "Num New Cases"),
               # Pass in Date objects
               dateRangeInput("dateRange", "Date range:",
