@@ -291,6 +291,7 @@ ui <- dashboardPage(
                                         "Linked to known cluster" = "Linked Cluster",
                                         "Household contacts" = "Contact Household",
                                         "Close contacts" = "Contact Close",
+                                        "Under Investigation" = "under Investigation",
                                         
                                         "Tests" = "Tests 24hrs",
                                         "Overseas Acquired" = "Overseas Acquired",
@@ -311,6 +312,21 @@ ui <- dashboardPage(
                 column(12),
                 plotOutput("graph_1")
               ),
+              
+              # br(),
+              # 
+              # fluidRow(
+              #   column(12),
+              #   plotOutput("graph_2")
+              # ),
+              # 
+              # br(),
+              # 
+              # fluidRow(
+              #   column(12),
+              #   plotOutput("graph_3")
+              # ),
+              
               br(),
               p("Made by Phillip Hungerford"),
               p("For more details visit my:", a("website", href="https://philliphungerford.github.io")),
@@ -367,7 +383,7 @@ server <- function(input, output) {
       scale_x_date(date_labels="%d %b",date_breaks  ="1 day") + 
       labs(x = "Date",
            y = "Number of Cases",
-           title="") + 
+           title=" Trends Over Time") + 
       scale_color_brewer(palette = "Set1") +
       theme_light() +
       theme(legend.position = "bottom",
@@ -375,6 +391,69 @@ server <- function(input, output) {
 
     
   })
+  
+  # output$graph_2 <- renderPlot({
+  #   
+  #   # create area plot
+  #   tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
+  #   
+  #   # select variables that have been checked in box
+  #   
+  #   # select variables that have been checked in box
+  #   tmp <- df_plot[df_plot$variable %in% tmp_vars,]
+  #   
+  #   # use LOCF for missing data for 8th and 9th august
+  #   #tmp$value <- zoo::na.locf(tmp$value)
+  #   
+  #   # calculate percentages
+  #   tmp = tmp %>% 
+  #     group_by(Date) %>%
+  #     mutate(percent = (value / sum(value))*100)
+  #   
+  #   tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
+  #   
+  #   # generate plot
+  #   ggplot(data = tmp, aes(fill=variable, y=percent, x = Date)) + 
+  #     geom_area() +
+  #     labs(x = "Date",
+  #          y = "Number of Cases",
+  #          title="Breakdown of New Cases Over Time") + 
+  #     scale_color_brewer(palette = "Set1") +
+  #     theme_light() +
+  #     theme(legend.position = "bottom",
+  #           legend.title=element_blank())
+  # })
+  # 
+  # output$graph_3 <- renderPlot({
+  #   # stacked bar chart to show percent of newcases distribution
+  #   
+  #   tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
+  #   
+  #   # select variables that have been checked in box
+  #   tmp <- df_plot[df_plot$variable %in% tmp_vars,]
+  #   
+  #   # filter data by date
+  #   tmp <- tmp %>% filter(Date == date_latest)
+  #   
+  #   # calculate percentages
+  #   tmp = tmp %>% 
+  #     mutate(percent = round((value / sum(value))*100,0))
+  #   
+  #   tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
+  #   
+  #   # generate plot
+  #   ggplot(data = tmp, aes(fill=variable, y=value, x = Date)) + 
+  #     geom_bar(position="stack", stat="identity") +
+  #     geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 4) +
+  #     labs(x = "Date",
+  #          y = "Number of Cases",
+  #          title="Breakdown of New Cases Today") + 
+  #     scale_color_brewer(palette = "Set1") +
+  #     theme_light() +
+  #     theme(legend.position = "bottom",
+  #           legend.title=element_blank())
+  # 
+  # })
   
   
   #=========================================================================
