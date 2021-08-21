@@ -94,6 +94,7 @@ ui <- dashboardPage(
               h1("COVID-19 Tracker NSW"),
               p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is sourced from", a("NSW Health.", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx")),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              # SECTION 1 = DATE
               h1("Date"),
               # Info boxes for Overview
               # DATE
@@ -110,6 +111,7 @@ ui <- dashboardPage(
                   color = "blue")
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              # SECTION 2 = OVERVIEW
               h1("Overview"),
               # CASE NUMBERS (RED)
               fluidRow(                
@@ -131,8 +133,7 @@ ui <- dashboardPage(
 
                 
                 ),
-              
-              # VACCINATIONS
+              # DATE
               fluidRow(
                 column(12),
                 # TOTAL VACCINATIONS NSW
@@ -177,7 +178,7 @@ ui <- dashboardPage(
 
               
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              
+              # SECTION 3 = VACCINATIONS
               h1("Vaccinations"),
               p("These are vaccinations administered by NSW Health"),
               fluidRow(
