@@ -20,21 +20,29 @@
 # https://fontawesome.com/v4.7.0/icons/
 ##############################################################################
 # Import libraries
-library(dplyr)
+library(shiny) # for dashboard
+library(dplyr) # filtering
 library(haven)
-library(shiny)
 library(shinydashboard) # for tabs
 library(DT) # for displaying tables
-library(ggplot2)
+library(ggplot2) # for figures
 library(data.table)
-library(reshape2)
+library(reshape2) # for data manipulation
 library(tools)
 library(tidyverse)
 library(scales) # add comma to output
-#library(googlesheets4)
+
 ##############################################################################
-# load data
-#df <- read_sheet("https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing") 
+# LOAD DATA
+#=============================================================================
+
+# # google sheets access in testing
+# library(googlesheets4)
+# u <- "https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing"
+# df <- read_sheet(u) 
+
+#=============================================================================
+# Read CSV
 df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
 df$date <- as.Date(df$date, format = "%Y-%m-%d")
 date_latest <- max(df$date)
@@ -316,20 +324,59 @@ ui <- dashboardPage(
                 plotOutput("graph_1")
               ),
               
-              # br(),
-              # 
-              # fluidRow(
-              #   column(12),
-              #   plotOutput("graph_2")
-              # ),
-              # 
-              # br(),
-              # 
-              # fluidRow(
-              #   column(12),
-              #   plotOutput("graph_3")
-              # ),
+              br(),
+
+              fluidRow(
+                column(12),
+                plotOutput("graph_2")
+              ),
+
+              br(),
+
+              fluidRow(
+                column(12),
+                plotOutput("graph_3")
+              ),
               
+              ## PAYPAL BUTTON
+              # fluidRow(
+              #   tags$script(src = "https://www.paypalobjects.com/api/checkout.js"),
+              #   tags$script("paypal.Button.render({
+              #               // Configure environment
+              #               env: 'sandbox',
+              #               client: {
+              #               sandbox: 'demo_sandbox_client_id',
+              #               production: 'demo_production_client_id'
+              #               },
+              #               // Customize button (optional)
+              #               locale: 'en_US',
+              #               style: {
+              #               size: 'small',
+              #               color: 'gold',
+              #               shape: 'pill',
+              #               },
+              #               // Set up a payment
+              #               payment: function (data, actions) {
+              #               return actions.payment.create({
+              #               transactions: [{
+              #               amount: {
+              #               total: '0.01',
+              #               currency: 'USD'
+              #               }
+              #               }]
+              #               });
+              #               },
+              #               // Execute the payment
+              #               onAuthorize: function (data, actions) {
+              #               return actions.payment.execute()
+              #               .then(function () {
+              #               // Show a confirmation message to the buyer
+              #               window.alert('Thank you for your purchase!');
+              #               });
+              #               }
+              #               }, '#paypal-button');"),
+              #   tags$div(id = "paypal-button")
+              # ),
               br(),
               p("Made by Phillip Hungerford"),
               p("For more details visit my:", a("website", href="https://philliphungerford.github.io")),
@@ -395,68 +442,68 @@ server <- function(input, output) {
     
   })
   
-  # output$graph_2 <- renderPlot({
-  #   
-  #   # create area plot
-  #   tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
-  #   
-  #   # select variables that have been checked in box
-  #   
-  #   # select variables that have been checked in box
-  #   tmp <- df_plot[df_plot$variable %in% tmp_vars,]
-  #   
-  #   # use LOCF for missing data for 8th and 9th august
-  #   #tmp$value <- zoo::na.locf(tmp$value)
-  #   
-  #   # calculate percentages
-  #   tmp = tmp %>% 
-  #     group_by(Date) %>%
-  #     mutate(percent = (value / sum(value))*100)
-  #   
-  #   tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
-  #   
-  #   # generate plot
-  #   ggplot(data = tmp, aes(fill=variable, y=percent, x = Date)) + 
-  #     geom_area() +
-  #     labs(x = "Date",
-  #          y = "Number of Cases",
-  #          title="Breakdown of New Cases Over Time") + 
-  #     scale_color_brewer(palette = "Set1") +
-  #     theme_light() +
-  #     theme(legend.position = "bottom",
-  #           legend.title=element_blank())
-  # })
-  # 
-  # output$graph_3 <- renderPlot({
-  #   # stacked bar chart to show percent of newcases distribution
-  #   
-  #   tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
-  #   
-  #   # select variables that have been checked in box
-  #   tmp <- df_plot[df_plot$variable %in% tmp_vars,]
-  #   
-  #   # filter data by date
-  #   tmp <- tmp %>% filter(Date == date_latest)
-  #   
-  #   # calculate percentages
-  #   tmp = tmp %>% 
-  #     mutate(percent = round((value / sum(value))*100,0))
-  #   
-  #   tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
-  #   
-  #   # generate plot
-  #   ggplot(data = tmp, aes(fill=variable, y=value, x = Date)) + 
-  #     geom_bar(position="stack", stat="identity") +
-  #     geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 4) +
-  #     labs(x = "Date",
-  #          y = "Number of Cases",
-  #          title="Breakdown of New Cases Today") + 
-  #     scale_color_brewer(palette = "Set1") +
-  #     theme_light() +
-  #     theme(legend.position = "bottom",
-  #           legend.title=element_blank())
-  # 
-  # })
+  output$graph_2 <- renderPlot({
+
+    # create area plot
+    tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
+
+    # select variables that have been checked in box
+
+    # select variables that have been checked in box
+    tmp <- df_plot[df_plot$variable %in% tmp_vars,]
+
+    # use LOCF for missing data for 8th and 9th august
+    #tmp$value <- zoo::na.locf(tmp$value)
+
+    # calculate percentages
+    tmp = tmp %>%
+      group_by(Date) %>%
+      mutate(percent = (value / sum(value))*100)
+
+    tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
+
+    # generate plot
+    ggplot(data = tmp, aes(fill=variable, y=percent, x = Date)) +
+      geom_area() +
+      labs(x = "Date",
+           y = "Number of Cases",
+           title="Breakdown of New Cases Over Time") +
+      scale_color_brewer(palette = "Set1") +
+      theme_light() +
+      theme(legend.position = "bottom",
+            legend.title=element_blank())
+  })
+
+  output$graph_3 <- renderPlot({
+    # stacked bar chart to show percent of newcases distribution
+
+    tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
+
+    # select variables that have been checked in box
+    tmp <- df_plot[df_plot$variable %in% tmp_vars,]
+
+    # filter data by date
+    tmp <- tmp %>% filter(Date == date_latest)
+
+    # calculate percentages
+    tmp = tmp %>%
+      mutate(percent = round((value / sum(value))*100,0))
+
+    tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
+
+    # generate plot
+    ggplot(data = tmp, aes(fill=variable, y=value, x = Date)) +
+      geom_bar(position="stack", stat="identity") +
+      geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 4) +
+      labs(x = "Date",
+           y = "Number of Cases",
+           title="Breakdown of New Cases Today") +
+      scale_color_brewer(palette = "Set1") +
+      theme_light() +
+      theme(legend.position = "bottom",
+            legend.title=element_blank())
+
+  })
   
   
   #=========================================================================
