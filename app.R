@@ -31,8 +31,10 @@ library(reshape2)
 library(tools)
 library(tidyverse)
 library(scales) # add comma to output
+#library(googlesheets4)
 ##############################################################################
 # load data
+#df <- read_sheet("https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing") 
 df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
 df$date <- as.Date(df$date, format = "%Y-%m-%d")
 date_latest <- max(df$date)
