@@ -31,19 +31,14 @@ library(ggplot2) # for figures
 library(tools)
 library(tidyverse) # adds to title case
 library(scales) # add comma to output
+library(googlesheets4) # for reading data
 
 ##############################################################################
 # LOAD DATA
 #=============================================================================
-
-# # google sheets access in testing
-# library(googlesheets4)
-# u <- "https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing"
-# df <- read_sheet(u) 
-
-#=============================================================================
-# Read CSV
-df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
+gsheet_link <- "https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing"
+df <- read_sheet(gsheet_link)
+#df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
 df$date <- as.Date(df$date, format = "%Y-%m-%d")
 date_latest <- max(df$date)
 date_earliest <- max(df$date)-13
