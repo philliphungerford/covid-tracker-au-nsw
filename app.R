@@ -21,15 +21,15 @@
 ##############################################################################
 # Import libraries
 library(shiny) # for dashboard
-library(dplyr) # filtering
-library(haven)
 library(shinydashboard) # for tabs
-library(DT) # for displaying tables
+library(dplyr) # filtering
+#library(haven)
+#library(DT) # for displaying tables
 library(ggplot2) # for figures
-library(data.table)
-library(reshape2) # for data manipulation
+#library(data.table)
+#library(reshape2) # for data manipulation
 library(tools)
-library(tidyverse)
+library(tidyverse) # adds to title case
 library(scales) # add comma to output
 
 ##############################################################################
