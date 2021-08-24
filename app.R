@@ -37,6 +37,7 @@ library(googlesheets4) # for reading data
 # LOAD DATA
 #=============================================================================
 gsheet_link <- "https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing"
+gs4_deauth()
 df <- read_sheet(gsheet_link)
 #df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
 df$date <- as.Date(df$date, format = "%Y-%m-%d")

@@ -5,9 +5,9 @@ account: philliphungerford
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4493709
-bundleId: 4951959
+bundleId: 4955986
 url: https://philliphungerford.shinyapps.io/covid-tracker-au-nsw/
-when: 1629690173.03316
-lastSyncTime: 1629690173.03316
+when: 1629767683.7404
+lastSyncTime: 1629767683.7404
 asMultiple: FALSE
 asStatic: FALSE
