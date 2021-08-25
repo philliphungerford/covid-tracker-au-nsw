@@ -41,15 +41,26 @@ gs4_deauth()
 df <- read_sheet(gsheet_link)
 #df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
 df$date <- as.Date(df$date, format = "%Y-%m-%d")
+
+#-----------------------------------------------------------------------------
+# Create variables
 date_latest <- max(df$date)
 date_earliest <- max(df$date)-13
 
+# dates for first and second doses are slow, so if current date is missing use previous dates data
+date_latest_doses <- date_latest
+while(is.na(df$doses_1st_24hr[df$date == date_latest_doses])){
+  date_latest_doses <- date_latest-1
+}
+
+#-----------------------------------------------------------------------------
 # rename variables for nicer look
 df_plot <- data.frame(df)
 new <- names(df_plot)
 new <- toTitleCase(str_replace_all(new, "_", " "))
 names(df_plot) <- new
 
+#-----------------------------------------------------------------------------
 ## TIDY DATA
 # date, variable, value
 df_plot <- reshape2::melt(df_plot, id.var = "Date")
@@ -95,7 +106,7 @@ ui <- dashboardPage(
       #-----------------------------------------------------------------
       # TAB 1: Overview
       tabItem(tabName = "overview",
-
+              
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("COVID-19 Tracker NSW"),
               p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health.", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx")),
@@ -129,16 +140,16 @@ ui <- dashboardPage(
                   "Total COVID cases since pandemic",
                   icon = icon("male"),
                   color = "red"),
-
+                
                 # Total in past 14 days
                 valueBox(
                   value = comma(sum(df$num_new_cases[which(df$date >= date_earliest)])),
                   "Total cases in past 14 days",
                   icon = icon("male"),
                   color = "red")
-
                 
-                ),
+                
+              ),
               # DATE
               fluidRow(
                 column(12),
@@ -181,33 +192,66 @@ ui <- dashboardPage(
                   icon = icon("thermometer"),
                   color = "orange")
               ),
-
+              
               
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               # SECTION 3 = VACCINATIONS
               h1("Vaccinations"),
-              p("These are vaccinations administered by NSW Health"),
+              # CUMULATIVE DOSES
               fluidRow(
                 column(12),
                 ## DOSES
                 # Tests
                 valueBox(
-                  value = comma(df$doses_1st_24hr[df$date == date_latest]),
+                  value = comma(df$doses_total_24hr[df$date == date_latest]),
+                  "Total Doses administered in 24hrs",
+                  icon = icon("medkit"),
+                  color = "green"),
+                
+                ## DOSES
+                valueBox(
+                  value = comma(df$doses_total_nswHealth_cum[df$date == date_latest]),
+                  "Total Doses administered from NSW Health",
+                  icon = icon("medkit"),
+                  color = "green"),
+                
+                valueBox(
+                  value = comma(df$doses_total_gp_cum[df$date == date_latest]),
+                  "Total Doses administered from GP network",
+                  icon = icon("medkit"),
+                  color = "green"),
+                valueBox(
+                  value = comma(df$doses_total_NSW[df$date == date_latest]),
+                  "Total Doses administered in NSW",
+                  icon = icon("medkit"),
+                  color = "green")
+              ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              # SECTION 3 = VACCINATIONS
+              h1("Vaccinations by dose"),
+              p("These are vaccinations administered by NSW Health"),
+              fluidRow(
+                valueBox(
+                  value =  format(date_latest_doses, "%a %b %d"),
+                  "Date updated",
+                  icon = icon("calendar-o"),
+                  color = "green"),
+                
+                column(12),
+                ## DOSES
+                # Tests
+                valueBox(
+                  value = comma(df$doses_1st_24hr[df$date == date_latest_doses]),
                   "First Dose administered in 24hrs",
                   icon = icon("medkit"),
                   color = "green"),
                 # Tests
                 valueBox(
-                  value = comma(df$doses_2nd_24hr[df$date == date_latest]),
+                  value = comma(df$doses_2nd_24hr[df$date == date_latest_doses]),
                   "Second Dose administered in 24hrs",
                   icon = icon("medkit"),
                   color = "green"),
                 
-                valueBox(
-                  value = comma(df$doses_total_24hr[df$date == date_latest]),
-                  "Total Doses administered in 24hrs",
-                  icon = icon("medkit"),
-                  color = "green")
               ),
               # CUMULATIVE DOSES
               fluidRow(
@@ -217,26 +261,21 @@ ui <- dashboardPage(
                 
                 # Tests
                 valueBox(
-                  value = comma(df$doses_1st_cum[df$date == date_latest]),
+                  value = comma(df$doses_1st_cum[df$date == date_latest_doses]),
                   "First Dose administered",
                   icon = icon("medkit"),
                   color = "green"),
                 
                 # Tests
                 valueBox(
-                  value = comma(df$doses_2nd_cum[df$date == date_latest]),
+                  value = comma(df$doses_2nd_cum[df$date == date_latest_doses]),
                   "Second Dose administered",
                   icon = icon("medkit"),
                   color = "green"),
                 
-                valueBox(
-                  value = comma(df$doses_total_nswHealth_cum[df$date == date_latest]),
-                  "Total Doses administered",
-                  icon = icon("medkit"),
-                  color = "green")
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                h1("Past 24hrs from 8pm last night:"),
+              h1("Past 24hrs from 8pm last night:"),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               # 2 rows of 3 
               fluidRow(
@@ -254,7 +293,7 @@ ui <- dashboardPage(
                   "Infectious in the community",
                   icon = icon("map"),
                   color = "red")
-              
+                
               ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               fluidRow(
@@ -280,7 +319,7 @@ ui <- dashboardPage(
                   icon = icon("heartbeat"),
                   color = "orange")
               ),
-            
+              
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h2("Trends"),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -305,7 +344,7 @@ ui <- dashboardPage(
                                         "Deaths" = "Deaths",
                                         "Hospitalised" = "Hospitalised",
                                         "In ICU" = "Icu"
-                                        ),
+                                   ),
                                  selected = "Num New Cases"),
               # Pass in Date objects
               dateRangeInput("dateRange", "Date range:",
@@ -321,14 +360,14 @@ ui <- dashboardPage(
               ),
               
               br(),
-
+              
               fluidRow(
                 column(12),
                 plotOutput("graph_2")
               ),
-
+              
               br(),
-
+              
               fluidRow(
                 column(12),
                 plotOutput("graph_3")
@@ -377,10 +416,10 @@ ui <- dashboardPage(
               p("Made by Phillip Hungerford"),
               p("For more details visit my:", a("website", href="https://philliphungerford.github.io")),
               p("If you would like to make a request, email me on phillip.hungerford@gmail.com")
-              ),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-          
+      ),
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      
       #-----------------------------------------------------------------
       # TAB 13: Acknowledgements
       tabItem(tabName = "information",
@@ -434,30 +473,30 @@ server <- function(input, output) {
       theme_light() +
       theme(legend.position = "bottom",
             legend.title=element_blank())
-
+    
     
   })
   
   output$graph_2 <- renderPlot({
-
+    
     # create area plot
     tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
-
+    
     # select variables that have been checked in box
-
+    
     # select variables that have been checked in box
     tmp <- df_plot[df_plot$variable %in% tmp_vars,]
-
+    
     # use LOCF for missing data for 8th and 9th august
     #tmp$value <- zoo::na.locf(tmp$value)
-
+    
     # calculate percentages
     tmp = tmp %>%
       group_by(Date) %>%
       mutate(percent = (value / sum(value))*100)
-
+    
     tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
-
+    
     # generate plot
     ggplot(data = tmp, aes(fill=variable, y=percent, x = Date)) +
       geom_area() +
@@ -469,24 +508,24 @@ server <- function(input, output) {
       theme(legend.position = "bottom",
             legend.title=element_blank())
   })
-
+  
   output$graph_3 <- renderPlot({
     # stacked bar chart to show percent of newcases distribution
-
+    
     tmp_vars <- c("under Investigation", "Contact Household", "Contact Close")
-
+    
     # select variables that have been checked in box
     tmp <- df_plot[df_plot$variable %in% tmp_vars,]
-
+    
     # filter data by date
     tmp <- tmp %>% filter(Date == date_latest)
-
+    
     # calculate percentages
     tmp = tmp %>%
       mutate(percent = round((value / sum(value))*100,0))
-
+    
     tmp$label = paste0(sprintf("%.0f", tmp$percent), "%")
-
+    
     # generate plot
     ggplot(data = tmp, aes(fill=variable, y=value, x = Date)) +
       geom_bar(position="stack", stat="identity") +
@@ -498,7 +537,7 @@ server <- function(input, output) {
       theme_light() +
       theme(legend.position = "bottom",
             legend.title=element_blank())
-
+    
   })
   
   
