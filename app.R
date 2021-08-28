@@ -361,18 +361,18 @@ ui <- dashboardPage(
               
               br(),
               
-              fluidRow(
-                column(12),
-                plotOutput("graph_2")
-              ),
-              
-              br(),
-              
-              fluidRow(
-                column(12),
-                plotOutput("graph_3")
-              ),
-              
+              # fluidRow(
+              #   column(12),
+              #   plotOutput("graph_2")
+              # ),
+              # 
+              # br(),
+              # 
+              # fluidRow(
+              #   column(12),
+              #   plotOutput("graph_3")
+              # ),
+              # 
               ## PAYPAL BUTTON
               # fluidRow(
               #   tags$script(src = "https://www.paypalobjects.com/api/checkout.js"),
