@@ -92,7 +92,9 @@ ui <- dashboardPage(
   dashboardHeader(title =  "COVID-19 Tracker NSW",
                   titleWidth = 300,
                   tags$li(class="dropdown",
-                          tags$a(href='https://github.com/philliphungerford/covid-tracker-au-nsw', icon('github'), "Source Code", target="_blank"))
+                          tags$a(href='https://github.com/philliphungerford/covid-tracker-au-nsw', icon('github'), "Source Code", target="_blank")),
+                  tags$li(class="dropdown",
+                          tags$a(href='https://philliphungerford.github.io', icon('globe'), "Learn More", target="_blank"))
   ),
   #=========================================================================
   ## Sidebar content
