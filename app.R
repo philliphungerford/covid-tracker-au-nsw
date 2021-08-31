@@ -89,7 +89,11 @@ ui <- dashboardPage(
   # START DASHBOARD
   #=========================================================================
   # MAIN TITLE
-  dashboardHeader(title = "COVID19 Tracker NSW"),
+  dashboardHeader(title =  "COVID-19 Tracker NSW",
+                  titleWidth = 300,
+                  tags$li(class="dropdown",
+                          tags$a(href='https://github.com/philliphungerford/covid-tracker-au-nsw', icon('github'), "Source Code", target="_blank"))
+  ),
   #=========================================================================
   ## Sidebar content
   dashboardSidebar(
