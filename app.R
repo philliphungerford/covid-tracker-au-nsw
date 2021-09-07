@@ -130,75 +130,53 @@ ui <- dashboardPage(
               
               # Row 1 are boxes
               fluidRow(
-                column(width=2,
+                column(width=3,
                        valueBox(
                          value =  format(date_latest, "%a %b %d"),
                          "Date updated",
                          icon = icon("calendar-o"),
                          color = row_1_col,
                          width = NULL)),
-                column(width=2,
+                column(width=3,
                        valueBox(
-                         value =  date_latest - as.Date("2021-06-25"),
-                         "Days since June 25th lockdown",
-                         icon = icon("calendar-o"),
-                         color = row_1_col,
-                         width = NULL)),
-                column(width=2,
-                       valueBox(
-                         value = comma(df$doses_total_NSW[df$date == date_latest]),
-                         "Total Vaccinations in NSW",
+                         value = df$num_new_cases[df$date == date_latest],
+                         "New local cases",
                          icon = icon("male"),
                          color = row_1_col,
                          width = NULL)),
-                column(width=2,
-                       # Ventilator
-                       valueBox(
-                         value = comma(df$total_tests[df$date == date_latest]),
-                         "Total tests",
-                         icon = icon("thermometer"),
-                         color = row_1_col,
-                         width = NULL)),
-                column(width=2,
-                       valueBox(
-                         value = comma(df$doses_total_NSW[df$date == date_latest]),
-                         "Deaths",
-                         icon = icon("male"),
-                         color = row_1_col,
-                         width = NULL)),
-                column(width=2,
+                column(width=3,
                        valueBox(
                          value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
                          "Cases since pandemic",
-                         icon = icon("male"),
+                         icon = icon("line-chart"),
+                         color = row_1_col,
+                         width = NULL)),
+                column(width=3,
+                       valueBox(
+                         value = comma(df$doses_total_NSW[df$date == date_latest]),
+                         "Total Vaccinations in NSW",
+                         icon = icon("medkit"),
                          color = row_1_col,
                          width = NULL))
-
                 ),
               
               fluidRow(
-                column(width=2,
-                         valueBox(
-                           value = df$num_new_cases[df$date == date_latest],
-                           "New local cases",
-                           icon = icon("male"),
-                           color = row_2_col,
-                             width = NULL)),
-               column(width=2,
+
+               column(width=3,
                          valueBox(
                            value = df$hospitalised[df$date == date_latest],
                            "Currently in hospital",
                            icon = icon("hospital-o"),
                            color = row_2_col,
                            width = NULL)),
-               column(width=2,
+               column(width=3,
                        valueBox(
                          value = df$icu[df$date == date_latest],
                          "Currently in ICU",
                          icon = icon("bed"),
                          color = row_2_col,
                          width = NULL)),
-                      column(width=2,
+                      column(width=3,
                        # Ventilator
                        valueBox(
                          value = df$ventilator[df$date == date_latest],
@@ -206,24 +184,18 @@ ui <- dashboardPage(
                          icon = icon("heartbeat"),
                          color = row_2_col,
                          width = NULL)),
-               column(width=2,
-               valueBox(
-                 value = df$deaths[df$date == date_latest],
-                 "Total deaths",
-                 icon = icon("user-times"),
-                 color = row_2_col,
-                 width = NULL)),
-               column(width=2,
+               column(width=3,
                       valueBox(
-                        value = comma(sum(df$cases_20210616_outbreak[which(df$date == date_latest)])),
-                        "Cases since Jun 16 outbreak",
-                        icon = icon("male"),
+                        value = df$deaths[df$date == date_latest],
+                        "Total deaths",
+                        icon = icon("user-times"),
                         color = row_2_col,
                         width = NULL))
+               
                ),
               
               fluidRow(
-                column(width=4,
+                column(width=3,
                            # Input: Selector for variable to plot against mpg ----
                            checkboxGroupInput(inputId = "variable",
                                        label = "Variable:", 
@@ -261,7 +233,7 @@ ui <- dashboardPage(
                                           max = date_latest,
                                           width = NULL)
                        ),
-                column(width=8,
+                column(width=9,
                            plotOutput(outputId = "graph_1", width = NULL, height=600)
                        ),
  
