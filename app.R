@@ -77,6 +77,9 @@ df_vars <- colnames(df)
 size_line=2
 size_point=4
 value_box_width=4
+row_1_col = 'blue'
+row_2_col = 'green'
+
 ##############################################################################
 # functions for plots
 #source("functions/utilities.R")
@@ -110,171 +113,166 @@ ui <- dashboardPage(
   #=========================================================================
   ## Body content
   dashboardBody(
-    tags$head(tags$script('
-      // Define function to set height of "map" and "map_container"
-      setHeight = function() {
-        var window_height = $(window).height();
-        var header_height = $(".main-header").height();
+    # make background white
+    tags$head(tags$style(HTML('
+                                /* body */
+                                .content-wrapper, .right-side {
+                                background-color: #ffffff;
+                                }
 
-        var boxHeight = window_height - header_height - 30;
-
-        $("#box_overview").height(boxHeight-80);
-        $("#box_plot").height(boxHeight-80);
-      };
-
-      // Set input$box_height when the connection is established
-      $(document).on("shiny:connected", function(event) {
-        setHeight();
-      });
-
-      // Refresh the box height on every window resize event    
-      $(window).on("resize", function(){
-        setHeight();
-      });
-    ')),
+                                '))),
     value = tags$p("my info box message", style = "font-size: 50%;"),
     
     tabItems(
       #-----------------------------------------------------------------
       # TAB 1: Overview
       tabItem(tabName = "overview",
+              
+              # Row 1 are boxes
               fluidRow(
-              ),
-              fluidRow(
-                column(width=3,
+                column(width=2,
                        valueBox(
-                             value =  format(date_latest, "%a %b %d"),
-                             "Date updated",
-                             icon = icon("calendar-o"),
-                             color = "blue",
-                             width = NULL),
-                           
-                         valueBox(
-                           value = comma(df$doses_total_NSW[df$date == date_latest]),
-                           "Total Vaccinations in NSW",
-                           icon = icon("male"),
-                           color = "blue",
-                             width = NULL),
-                
+                         value =  format(date_latest, "%a %b %d"),
+                         "Date updated",
+                         icon = icon("calendar-o"),
+                         color = row_1_col,
+                         width = NULL)),
+                column(width=2,
+                       valueBox(
+                         value =  date_latest - as.Date("2021-06-25"),
+                         "Days since June 25th lockdown",
+                         icon = icon("calendar-o"),
+                         color = row_1_col,
+                         width = NULL)),
+                column(width=2,
+                       valueBox(
+                         value = comma(df$doses_total_NSW[df$date == date_latest]),
+                         "Total Vaccinations in NSW",
+                         icon = icon("male"),
+                         color = row_1_col,
+                         width = NULL)),
+                column(width=2,
+                       # Ventilator
+                       valueBox(
+                         value = comma(df$total_tests[df$date == date_latest]),
+                         "Total tests",
+                         icon = icon("thermometer"),
+                         color = row_1_col,
+                         width = NULL)),
+                column(width=2,
+                       valueBox(
+                         value = comma(df$doses_total_NSW[df$date == date_latest]),
+                         "Deaths",
+                         icon = icon("male"),
+                         color = row_1_col,
+                         width = NULL)),
+                column(width=2,
+                       valueBox(
+                         value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
+                         "Cases since pandemic",
+                         icon = icon("male"),
+                         color = row_1_col,
+                         width = NULL))
+
+                ),
+              
+              fluidRow(
+                column(width=2,
                          valueBox(
                            value = df$num_new_cases[df$date == date_latest],
                            "New local cases",
                            icon = icon("male"),
-                           color = "blue",
-                             width = NULL),
-                           
+                           color = row_2_col,
+                             width = NULL)),
+               column(width=2,
                          valueBox(
                            value = df$hospitalised[df$date == date_latest],
                            "Currently in hospital",
                            icon = icon("hospital-o"),
-                           color = "blue",
-                           width = NULL)
-                       
-                       ),
-                
-                column(width=9,
-                       box(title = "Trends Over time", width = NULL, status = "primary",
-                       plotOutput(outputId = "graph_1", width = NULL)
-                       ))
-              ),
-              
-              fluidRow(
-                
-                column(width=3,
-                       # ICU
+                           color = row_2_col,
+                           width = NULL)),
+               column(width=2,
                        valueBox(
                          value = df$icu[df$date == date_latest],
                          "Currently in ICU",
                          icon = icon("bed"),
-                         color = "blue",
-                         width = NULL),
-                       
+                         color = row_2_col,
+                         width = NULL)),
+                      column(width=2,
                        # Ventilator
                        valueBox(
                          value = df$ventilator[df$date == date_latest],
                          "Currently on a ventilator",
                          icon = icon("heartbeat"),
-                         color = "blue",
-                         width = NULL),
-                       
-                       # Deaths
-                       valueBox(
-                         value = df$deaths[df$date == date_latest],
-                         "Total deaths",
-                         icon = icon("user-times"),
-                         color = "blue",
-                         width = NULL)
+                         color = row_2_col,
+                         width = NULL)),
+               column(width=2,
+               valueBox(
+                 value = df$deaths[df$date == date_latest],
+                 "Total deaths",
+                 icon = icon("user-times"),
+                 color = row_2_col,
+                 width = NULL)),
+               column(width=2,
+                      valueBox(
+                        value = comma(sum(df$cases_20210616_outbreak[which(df$date == date_latest)])),
+                        "Cases since Jun 16 outbreak",
+                        icon = icon("male"),
+                        color = row_2_col,
+                        width = NULL))
+               ),
+              
+              fluidRow(
+                column(width=4,
+                           # Input: Selector for variable to plot against mpg ----
+                           checkboxGroupInput(inputId = "variable",
+                                       label = "Variable:", 
+                                       choices = 
+                                         list(
+                                           "New local cases " = "Num New Cases",
+                                           "Overseas Acquired" = "Overseas Acquired",
+                                           "Total New Cases" = "Total New Cases",
+                                           "Total Cases since Jan 25 2020" = "Cases 20200125",
+                                           "Total cases since recent outbreak ( Jun 16 2021)" = "Cases 20210616 Outbreak",
+                                           "Total Tests" = "Tests 24hrs",
+                                           "Total Tests in last 24 hours" = "Total Tests",
+                                           "In hospital" = "Hospitalised",
+                                           "In ICU" = "Icu",                                     
+                                           "Total deaths" = "Deaths",
+                                           "On ventilator" = 'Ventilator',
+                                           
+                                           # vaccinations
+                                           "Doses: in past 24hr by NSW Health" = "Doses Total 24hr",
+                                           "Doses: Total for NSW" = "Doses Total NSW",
+                                           "Doses: Total from NSW Health" = "Doses Total nswHealth Cum",
+                                           "Doses: Total from GP Network" = "Doses Total Gp Cum",
+                                           "Doses: First cumulative" = "Doses 1st Cum",
+                                           "Doses: Second cumulative" = "Doses 2nd Cum", 
+                                           "First dose (NSW Health)" = "Doses 1st 24hr",
+                                           "Second dose (NSW Health)" = "Doses 2nd 24hr"
+                                         ),
+                                       selected = c("Num New Cases","Hospitalised") , width = NULL),
+                           
+                           # Pass in Date objects
+                           dateRangeInput("dateRange", "Date range:",
+                                          start = date_latest-30,
+                                          end = date_latest,
+                                          min = "2021-08-01",
+                                          max = date_latest,
+                                          width = NULL)
                        ),
+                column(width=8,
+                           plotOutput(outputId = "graph_1", width = NULL, height=600)
+                       ),
+ 
                 
-              column(width=9,
-                     box(title = "Select variable", width = NULL, status = "primary",
-                     # Input: Selector for variable to plot against mpg ----
-                     selectInput(inputId = "variable",
-                                 label = "Variable:", 
-                                 choices = 
-                                   list(
-                                     "New local cases " = "Num New Cases",
-                                     "Overseas Acquired" = "Overseas Acquired",
-                                     "Total New Cases" = "Total New Cases",
-                                     "Total Cases since Jan 25 2020" = "Cases 20200125",
-                                     "Total cases since recent outbreak ( Jun 16 2021)" = "Cases 20210616 Outbreak",
-                                     "Total Tests" = "Tests 24hrs",
-                                     "Total Tests in last 24 hours" = "Total Tests",
-                                     "In hospital" = "Hospitalised",
-                                     "In ICU" = "Icu",                                     
-                                     "Total deaths" = "Deaths",
-                                     "On ventilator" = 'Ventilator',
-                                     
-                                     # vaccinations
-                                     "Doses: in past 24hr by NSW Health" = "Doses Total 24hr",
-                                     "Doses: Total for NSW" = "Doses Total NSW",
-                                     "Doses: Total from NSW Health" = "Doses Total nswHealth Cum",
-                                     "Doses: Total from GP Network" = "Doses Total Gp Cum",
-                                     "Doses: First cumulative" = "Doses 1st Cum",
-                                     "Doses: Second cumulative" = "Doses 2nd Cum", 
-                                     "First dose (NSW Health)" = "Doses 1st 24hr",
-                                     "Second dose (NSW Health)" = "Doses 2nd 24hr"
-                                   ),
-                                 selected = "Num New Cases", width = NULL),
-                     
-                     selectInput(inputId = "variable2",
-                                 label = "Variable2:", 
-                                 choices = 
-                                   list(
-                                     "New local cases " = "Num New Cases",
-                                     "Overseas Acquired" = "Overseas Acquired",
-                                     "Total New Cases" = "Total New Cases",
-                                     "Total Cases since Jan 25 2020" = "Cases 20200125",
-                                     "Total cases since recent outbreak ( Jun 16 2021)" = "Cases 20210616 Outbreak",
-                                     "Total Tests" = "Tests 24hrs",
-                                     "Total Tests in last 24 hours" = "Total Tests",
-                                     "In hospital" = "Hospitalised",
-                                     "In ICU" = "Icu",                                     
-                                     "Total deaths" = "Deaths",
-                                     "On ventilator" = 'Ventilator',
-                                     
-                                     # vaccinations
-                                     "Doses: in past 24hr by NSW Health" = "Doses Total 24hr",
-                                     "Doses: Total for NSW" = "Doses Total NSW",
-                                     "Doses: Total from NSW Health" = "Doses Total nswHealth Cum",
-                                     "Doses: Total from GP Network" = "Doses Total Gp Cum",
-                                     "Doses: First cumulative" = "Doses 1st Cum",
-                                     "Doses: Second cumulative" = "Doses 2nd Cum", 
-                                     "First dose (NSW Health)" = "Doses 1st 24hr",
-                                     "Second dose (NSW Health)" = "Doses 2nd 24hr"
-                                   ),
-                                 selected = "Hospitalised", width = NULL),
-                     
-                     # Pass in Date objects
-                     dateRangeInput("dateRange", "Date range:",
-                                    start = date_latest-30,
-                                    end = date_latest,
-                                    min = "2021-08-01",
-                                    max = date_latest,
-                                    width = NULL),
-                     br(),
-                     p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx"),". Made by Phillip Hungerford. For more details visit my ", a("website", href="https://philliphungerford.github.io"), ".")
-              )),
+
+              ),
+              fluidRow(
+                column(width=12,
+                       p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx"),". Made by Phillip Hungerford. For more details visit my ", a("website", href="https://philliphungerford.github.io"), ".")
+                       
+                       )
               )
           ),
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -551,7 +549,7 @@ server <- function(input, output) {
       scale_x_date(date_labels="%d %b",date_breaks  ="1 day") + 
       labs(x = "Date",
            y = "Number of Cases",
-           title="") + 
+           title="Trend over time") + 
       scale_color_brewer(palette = "Set1") +
       theme_light() +
       theme(legend.position = "bottom",
