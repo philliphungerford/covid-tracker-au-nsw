@@ -164,7 +164,7 @@ ui <- dashboardPage(
 
                column(width=3,
                          valueBox(
-                           value = df$hospitalised[df$date == date_latest],
+                           value = df$in_hospital[df$date == date_latest],
                            "Currently in hospital",
                            icon = icon("hospital-o"),
                            color = row_2_col,
@@ -201,29 +201,31 @@ ui <- dashboardPage(
                                        label = "Variable:", 
                                        choices = 
                                          list(
-                                           "New local cases " = "Num New Cases",
-                                           "Overseas Acquired" = "Overseas Acquired",
-                                           "Total New Cases" = "Total New Cases",
+                                           "New Cases total (24hrs)" = "Total New Cases",
+                                           "New local cases (24hrs)" = "Num New Cases",
+                                           "Overseas Acquired (24hrs)" = "Overseas Acquired",
+                                           "Died (24hrs)" = "Died",
+                                           "Tests (24hrs)" = "Tests 24hrs",
+                                           "Hospitalised (24hrs)"= "Hospitalised",
                                            "Total Cases since Jan 25 2020" = "Cases 20200125",
                                            "Total cases since recent outbreak ( Jun 16 2021)" = "Cases 20210616 Outbreak",
-                                           "Total Tests" = "Tests 24hrs",
-                                           "Total Tests in last 24 hours" = "Total Tests",
-                                           "In hospital" = "Hospitalised",
-                                           "In ICU" = "Icu",                                     
+                                           "Total Tests" = "Total Tests",
+                                           "In hospital" = "In Hospital",
+                                           "In ICU" = "Icu",
                                            "Total deaths" = "Deaths",
                                            "On ventilator" = 'Ventilator',
                                            
                                            # vaccinations
-                                           "Doses: in past 24hr by NSW Health" = "Doses Total 24hr",
                                            "Doses: Total for NSW" = "Doses Total NSW",
                                            "Doses: Total from NSW Health" = "Doses Total nswHealth Cum",
                                            "Doses: Total from GP Network" = "Doses Total Gp Cum",
                                            "Doses: First cumulative" = "Doses 1st Cum",
                                            "Doses: Second cumulative" = "Doses 2nd Cum", 
-                                           "First dose (NSW Health)" = "Doses 1st 24hr",
-                                           "Second dose (NSW Health)" = "Doses 2nd 24hr"
+                                           "Doses: First dose rate per 24hrs (NSW Health)" = "Doses 1st 24hr",
+                                           "Doses: Second dose rate per 24hrs (NSW Health)" = "Doses 2nd 24hr",
+                                           "Doses: Total dose rate in past 24hr (NSW Health)" = "Doses Total 24hr"
                                          ),
-                                       selected = c("Num New Cases","Hospitalised") , width = NULL),
+                                       selected = c("Num New Cases","In Hospital") , width = NULL),
                            
                            # Pass in Date objects
                            dateRangeInput("dateRange", "Date range:",
@@ -447,7 +449,7 @@ ui <- dashboardPage(
                 column(12),
                 # In hospital
                 valueBox(
-                  value = df$hospitalised[df$date == date_latest],
+                  value = df$in_hospital[df$date == date_latest],
                   "Currently in hospital",
                   icon = icon("hospital-o"),
                   color = "orange"),
@@ -525,7 +527,8 @@ server <- function(input, output) {
       scale_color_brewer(palette = "Set1") +
       theme_light() +
       theme(legend.position = "bottom",
-            legend.title=element_blank())
+            legend.title=element_blank(),
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
     
     
   })
