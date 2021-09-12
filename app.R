@@ -23,6 +23,7 @@
 library(shiny) # for dashboard
 library(shinydashboard) # for tabs
 library(dplyr) # filtering
+library(RColorBrewer)
 #library(haven)
 #library(DT) # for displaying tables
 library(ggplot2) # for figures
@@ -77,8 +78,8 @@ df_vars <- colnames(df)
 size_line=2
 size_point=4
 value_box_width=4
-row_1_col = 'blue'
-row_2_col = 'green'
+row_1_col = 'light-blue'
+row_2_col = 'light-blue'
 
 ##############################################################################
 # functions for plots
@@ -523,9 +524,9 @@ server <- function(input, output) {
       scale_x_date(date_labels="%d %b",date_breaks  ="1 day") + 
       labs(x = "Date",
            y = "Number of Cases",
-           title="Trend over time") + 
-      scale_color_brewer(palette = "Set1") +
-      theme_light() +
+           title="Trend over time") +
+      scale_color_brewer(palette = 'Blues') + 
+      theme_classic() +
       theme(legend.position = "bottom",
             legend.title=element_blank(),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
