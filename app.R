@@ -37,7 +37,8 @@ library(googlesheets4) # for reading data
 ##############################################################################
 # LOAD DATA
 #=============================================================================
-gsheet_link <- "https://docs.google.com/spreadsheets/d/1xgt7th62OGahzON01Oxb6phMknu6ffmkdVxUJA-9MBQ/edit?usp=sharing"
+#gs4_auth()
+gsheet_link <- "https://docs.google.com/spreadsheets/d/1L9wrys7FT2FqWOhBSWbctMw0F_5GvllrnHdgo1C9Fdk/edit?usp=sharing"
 gs4_deauth()
 df <- read_sheet(gsheet_link)
 #df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
@@ -108,6 +109,7 @@ ui <- dashboardPage(
       # icons from (https://fontawesome.com/v4.7.0/icons/)
       menuItem("Overview", tabName = "overview", icon = icon("desktop")),#
       menuItem("Breakdown", tabName = "breakdown", icon = icon("bar-chart")),#
+      menuItem("Vaccinations", tabName = "vaccinations", icon = icon("medkit")),#
       menuItem("Information", tabName = "information", icon = icon("info"))#
     )
   ),
@@ -129,8 +131,11 @@ ui <- dashboardPage(
       # TAB 1: Overview
       tabItem(tabName = "overview",
               
-              # Row 1 are boxes
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 1 - First 4 boxes
+              
               fluidRow(
+                
                 column(width=3,
                        valueBox(
                          value =  format(date_latest, "%a %b %d"),
@@ -138,6 +143,7 @@ ui <- dashboardPage(
                          icon = icon("calendar-o"),
                          color = row_1_col,
                          width = NULL)),
+                
                 column(width=3,
                        valueBox(
                          value = df$num_new_cases[df$date == date_latest],
@@ -145,6 +151,7 @@ ui <- dashboardPage(
                          icon = icon("male"),
                          color = row_1_col,
                          width = NULL)),
+                
                 column(width=3,
                        valueBox(
                          value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
@@ -152,6 +159,7 @@ ui <- dashboardPage(
                          icon = icon("line-chart"),
                          color = row_1_col,
                          width = NULL)),
+                
                 column(width=3,
                        valueBox(
                          value = comma(df$doses_total_NSW[df$date == date_latest]),
@@ -160,6 +168,9 @@ ui <- dashboardPage(
                          color = row_1_col,
                          width = NULL))
                 ),
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 2 - Second row of 4 boxes
               
               fluidRow(
 
@@ -170,6 +181,7 @@ ui <- dashboardPage(
                            icon = icon("hospital-o"),
                            color = row_2_col,
                            width = NULL)),
+               
                column(width=3,
                        valueBox(
                          value = df$icu[df$date == date_latest],
@@ -177,7 +189,8 @@ ui <- dashboardPage(
                          icon = icon("bed"),
                          color = row_2_col,
                          width = NULL)),
-                      column(width=3,
+                
+               column(width=3,
                        # Ventilator
                        valueBox(
                          value = df$ventilator[df$date == date_latest],
@@ -185,6 +198,7 @@ ui <- dashboardPage(
                          icon = icon("heartbeat"),
                          color = row_2_col,
                          width = NULL)),
+               
                column(width=3,
                       valueBox(
                         value = df$deaths[df$date == date_latest],
@@ -194,8 +208,11 @@ ui <- dashboardPage(
                         width = NULL))
                
                ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 3 - Checkbox and Plot
               
               fluidRow(
+                
                 column(width=3,
                            # Input: Selector for variable to plot against mpg ----
                            checkboxGroupInput(inputId = "variable",
@@ -236,6 +253,7 @@ ui <- dashboardPage(
                                           max = date_latest,
                                           width = NULL)
                        ),
+                
                 column(width=9,
                            plotOutput(outputId = "graph_1", width = NULL, height=600)
                        ),
@@ -243,241 +261,318 @@ ui <- dashboardPage(
                 
 
               ),
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 4 - Notes
+              
               fluidRow(
+                
                 column(width=12,
                        p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx"),". Made by Phillip Hungerford. For more details visit my ", a("website", href="https://philliphungerford.github.io"), ".")
                        
                        )
               )
           ),
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
       
       #-----------------------------------------------------------------
-      # TAB 3: Acknowledgements
+      # TAB 2: Breakdown
       tabItem(tabName = "breakdown",
               
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("COVID-19 Tracker NSW"),
               p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health.", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx")),
+              
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              # SECTION 1 = DATE
+              ## Row 1 - Date
+              
               h1("Date"),
-              # Info boxes for Overview
-              # DATE
+
+              
               fluidRow(
-                valueBox(
-                  value =  format(date_latest, "%a %b %d"),
-                  "Date updated",
-                  icon = icon("calendar-o"),
-                  color = "blue"),
-                valueBox(
-                  value =  date_latest - as.Date("2021-06-25"),
-                  "Days since June 25th lockdown",
-                  icon = icon("calendar-o"),
-                  color = "blue")
+                
+                column(width=3,
+                  valueBox(
+                    value =  format(date_latest, "%a %b %d"),
+                    "Date updated",
+                    icon = icon("calendar-o"),
+                    color = "blue",
+                    width=NULL)),
+                
+                column(width=3,
+                  valueBox(
+                    value =  date_latest - as.Date("2021-06-25"),
+                    "Days since June 25th lockdown",
+                    icon = icon("calendar-o"),
+                    color = "blue",
+                    width=NULL))
               ),
+              
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              # SECTION 2 = OVERVIEW
+              ## Row 2 - Overview
+              
               h1("Overview"),
-              # CASE NUMBERS (RED)
-              fluidRow(                
-                column(12),
-                
-                # Total Cases
-                valueBox(
-                  value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
-                  "Total COVID cases since pandemic",
-                  icon = icon("male"),
-                  color = "red"),
-                
-                # Total in past 14 days
-                valueBox(
-                  value = comma(sum(df$num_new_cases[which(df$date >= date_earliest)])),
-                  "Total cases in past 14 days",
-                  icon = icon("male"),
-                  color = "red")
-                
-                
-              ),
-              # DATE
+              
               fluidRow(
-                column(12),
-                # TOTAL VACCINATIONS NSW
-                valueBox(
-                  value = comma(df$doses_total_NSW[df$date == date_latest]),
-                  "Total Vaccinations in NSW",
-                  icon = icon("male"),
-                  color = "green"),
                 
-                # INCREASE IN VAC FROM PREVIOUS DAY
-                valueBox(
-                  value = comma(vaccinations_today - vaccinations_yesterday),
-                  "Difference in vaccines from yesterday",
-                  icon = icon("line-chart"),
-                  color = "green"),
+                column(width=3,
+                      valueBox(
+                        value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
+                        "Total COVID cases since pandemic",
+                        icon = icon("male"),
+                        color = "red",
+                        width=NULL)),
                 
-                # Tests
-                valueBox(
-                  value = paste0(round((((df$doses_total_NSW[df$date == date_latest])/10000000)*100),0),"%"),
-                  "Percent of 10 million goal",
-                  icon = icon("map"),
-                  color = "green")
+                column(width=3,
+                      valueBox(
+                        value = comma(sum(df$num_new_cases[which(df$date >= date_earliest)])),
+                        "Total cases in past 14 days",
+                        icon = icon("male"),
+                        color = "red",
+                        width=NULL)),
+                
+                column(width=3,
+                       valueBox(
+                         value = comma(df$doses_total_NSW[df$date == date_latest]),
+                         "Total Vaccinations in NSW",
+                         icon = icon("male"),
+                         color = "red",
+                         width=NULL)),
+                
+                column(width=3,
+                       valueBox(
+                         value = comma(vaccinations_today - vaccinations_yesterday),
+                         "Difference in vaccines from yesterday",
+                         icon = icon("line-chart"),
+                         color = "red",
+                         width=NULL))
               ),
               
-              # DEATHS & HOSPITALISED
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 3 - Deaths
+              
               fluidRow(
-                column(12),
-                # TOTAL DEATHS
-                valueBox(
-                  value = df$deaths[df$date == date_latest],
-                  "Total deaths",
-                  icon = icon("user-times"),
-                  color = "orange"),
                 
-                # Tests
-                valueBox(
-                  value = comma(df$total_tests[df$date == date_latest]),
-                  "Total tests",
-                  icon = icon("thermometer"),
-                  color = "orange")
+                column(width=3,
+                       valueBox(
+                         value = df$deaths[df$date == date_latest],
+                         "Total deaths",
+                         icon = icon("user-times"),
+                         color = "red",
+                         width=NULL)),
+                
+                column(width=3,
+                       valueBox(
+                         value = comma(df$total_tests[df$date == date_latest]),
+                         "Total tests",
+                         icon = icon("thermometer"),
+                         color = "red",
+                         width=NULL))
               ),
               
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 4 - Past 24 hours
               
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              # SECTION 3 = VACCINATIONS
-              h1("Vaccinations"),
-              # CUMULATIVE DOSES
-              fluidRow(
-                column(12),
-                ## DOSES
-                # Tests
-                valueBox(
-                  value = comma(df$doses_total_24hr[df$date == date_latest]),
-                  "Total Doses administered in 24hrs",
-                  icon = icon("medkit"),
-                  color = "green"),
-                
-                ## DOSES
-                valueBox(
-                  value = comma(df$doses_total_nswHealth_cum[df$date == date_latest]),
-                  "Total Doses administered from NSW Health",
-                  icon = icon("medkit"),
-                  color = "green"),
-                
-                valueBox(
-                  value = comma(df$doses_total_gp_cum[df$date == date_latest]),
-                  "Total Doses administered from GP network",
-                  icon = icon("medkit"),
-                  color = "green"),
-                valueBox(
-                  value = comma(df$doses_total_NSW[df$date == date_latest]),
-                  "Total Doses administered in NSW",
-                  icon = icon("medkit"),
-                  color = "green")
-              ),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              # SECTION 3 = VACCINATIONS
-              h1("Vaccinations by dose"),
-              p("These are vaccinations administered by NSW Health"),
-              fluidRow(
-                valueBox(
-                  value =  format(date_latest_doses, "%a %b %d"),
-                  "Date updated",
-                  icon = icon("calendar-o"),
-                  color = "green"),
-                
-                column(12),
-                ## DOSES
-                # Tests
-                valueBox(
-                  value = comma(df$doses_1st_24hr[df$date == date_latest_doses]),
-                  "First Dose administered in 24hrs",
-                  icon = icon("medkit"),
-                  color = "green"),
-                # Tests
-                valueBox(
-                  value = comma(df$doses_2nd_24hr[df$date == date_latest_doses]),
-                  "Second Dose administered in 24hrs",
-                  icon = icon("medkit"),
-                  color = "green"),
-                
-              ),
-              # CUMULATIVE DOSES
-              fluidRow(
-                column(12),
-                
-                ## DOSES
-                
-                # Tests
-                valueBox(
-                  value = comma(df$doses_1st_cum[df$date == date_latest_doses]),
-                  "First Dose administered",
-                  icon = icon("medkit"),
-                  color = "green"),
-                
-                # Tests
-                valueBox(
-                  value = comma(df$doses_2nd_cum[df$date == date_latest_doses]),
-                  "Second Dose administered",
-                  icon = icon("medkit"),
-                  color = "green"),
-                
-              ),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               h1("Past 24hrs from 8pm last night:"),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              # 2 rows of 3 
+
               fluidRow(
-                column(12),
-                # New Cases
-                valueBox(
-                  value = df$num_new_cases[df$date == date_latest],
-                  "New Cases",
-                  icon = icon("male"),
-                  color = "red"),
                 
-                # # Infectious
-                # valueBox(
-                #   value = df$infectious_24hrs[df$date == date_latest],
-                #   "Infectious in the community",
-                #   icon = icon("map"),
-                #   color = "red")
+                column(width=3,
+                       valueBox(
+                         value = df$num_new_cases[df$date == date_latest],
+                         "New Cases",
+                         icon = icon("male"),
+                         color = "red",
+                         width=NULL)),
                 
-              ),
-              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-              fluidRow(
-                column(12),
-                # In hospital
-                valueBox(
-                  value = df$in_hospital[df$date == date_latest],
-                  "Currently in hospital",
-                  icon = icon("hospital-o"),
-                  color = "orange"),
+                column(width=3,
+                       valueBox(
+                         value = df$in_hospital[df$date == date_latest],
+                         "Currently in hospital",
+                         icon = icon("hospital-o"),
+                         color = "red",
+                         width=NULL)),
                 
-                # ICU
-                valueBox(
-                  value = df$icu[df$date == date_latest],
-                  "Currently in ICU",
-                  icon = icon("bed"),
-                  color = "orange"),
+                column(width=3,
+                       valueBox(
+                         value = df$icu[df$date == date_latest],
+                         "Currently in ICU",
+                         icon = icon("bed"),
+                         color = "red",
+                         width=NULL)),
                 
-                # Ventilator
-                valueBox(
-                  value = df$ventilator[df$date == date_latest],
-                  "Currently on a ventilator",
-                  icon = icon("heartbeat"),
-                  color = "orange")
+                column(width=3,
+                       valueBox(
+                         value = df$ventilator[df$date == date_latest],
+                         "Currently on a ventilator",
+                         icon = icon("heartbeat"),
+                         color = "red",
+                         width=NULL))
+                
               ),
               
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Notes
               
               br(),
               br(),
               p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx"),". Made by Phillip Hungerford. For more details visit my ", a("website", href="https://philliphungerford.github.io"), ".")
       ),
+      #-----------------------------------------------------------------
+      # TAB 3: Vaccinations
+      tabItem(tabName = "vaccinations",
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              h1("COVID-19 Tracker NSW"),
+              p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health.", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx")),
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 1 - Date
+              
+              h1("Date"),
+              
+              
+              fluidRow(
+                
+                column(width=3,
+                       valueBox(
+                         value =  format(date_latest, "%a %b %d"),
+                         "Date updated",
+                         icon = icon("calendar-o"),
+                         color = "blue",
+                         width=NULL)),
+                
+                column(width=3,
+                       valueBox(
+                         value =  date_latest - as.Date("2021-06-25"),
+                         "Days since June 25th lockdown",
+                         icon = icon("calendar-o"),
+                         color = "blue",
+                         width=NULL))
+              ),
+              
+              fluidRow(
+              
+                ),
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 2 - Total dose breakdown
+              
+              h1("Vaccinations Overview"),
+              
+              fluidRow(
+
+                column(width=3,
+                  valueBox(
+                    value = comma(df$doses_total_NSW[df$date == date_latest]),
+                    "Total Doses administered in NSW",
+                    icon = icon("medkit"),
+                    color = "green",
+                    width=NULL)),
+                
+                column(width=3,
+                  valueBox(
+                    value = comma(df$doses_total_nswHealth_cum[df$date == date_latest]),
+                    "Total Doses administered from NSW Health",
+                    icon = icon("medkit"),
+                    color = "green",
+                    width=NULL)),
+                
+                column(width=3,
+                  valueBox(
+                    value = comma(df$doses_total_gp_cum[df$date == date_latest]),
+                    "Total Doses administered from GP network",
+                    icon = icon("medkit"),
+                    color = "green",
+                    width=NULL)),
+                
+                column(width=3,
+                   valueBox(
+                     value = comma(vaccinations_today - vaccinations_yesterday),
+                     "Difference in vaccines from yesterday",
+                     icon = icon("line-chart"),
+                     color = "green",
+                     width=NULL))
+              ),
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 3 - Date of doses data
+              h1("Vaccinations by dose"),
+              p("These are vaccinations administered by NSW Health"),
+              
+              fluidRow(
+                column(width=3,
+                       valueBox(
+                         value =  format(date_latest_doses, "%a %b %d"),
+                        "Date updated",
+                        icon = icon("calendar-o"),
+                        color = "green",
+                        width=NULL))
+                
+                ),
+
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 4 - First dose background
+              
+              fluidRow(
+                
+                column(width=3,
+                       valueBox(
+                         value = comma(df$doses_1st_24hr[df$date == date_latest_doses]),
+                        "First Dose administered in 24hrs",
+                        icon = icon("medkit"),
+                        color = "green",
+                        width=NULL)),
+                
+                column(width=3,
+                      valueBox(
+                        value = comma(df$doses_2nd_24hr[df$date == date_latest_doses]),
+                        "Second Dose administered in 24hrs",
+                        icon = icon("medkit"),
+                        color = "green",
+                        width=NULL)),
+                
+                column(width=3,
+                      valueBox(
+                        value = comma(df$doses_total_24hr[df$date == date_latest]),
+                        "Total Doses administered in 24hrs",
+                        icon = icon("medkit"),
+                        color = "green",
+                        width=NULL))
+              ),
+              
+              #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              ## Row 5 - Cumulative
+              
+              fluidRow(
+
+                column(width=3,
+                      valueBox(
+                        value = comma(df$doses_1st_cum[df$date == date_latest_doses]),
+                        "First Dose administered",
+                        icon = icon("medkit"),
+                        color = "green",
+                        width=NULL)),
+                
+                column(width=3, 
+                      valueBox(
+                        value = comma(df$doses_2nd_cum[df$date == date_latest_doses]),
+                        "Second Dose administered",
+                        icon = icon("medkit"),
+                        color = "green",
+                        width=NULL)),
+                
+                column(width=3,      
+                      valueBox(
+                        value = comma(df$doses_total_nswHealth_cum[df$date == date_latest]),
+                        "Total Doses administered from NSW Health",
+                        icon = icon("medkit"),
+                        color = "green",
+                        width=NULL))
+              ),
+              p("This dashboard shows current statistics for COVID-19 cases in NSW. Data is based on daily 11am updates and are sourced from", a("NSW Health", href="https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx"),". Made by Phillip Hungerford. For more details visit my ", a("website", href="https://philliphungerford.github.io"), ".")
+      ),
       
       #-----------------------------------------------------------------
-      # TAB Last: Information
+      # TAB 3: Information
       tabItem(tabName = "information",
               h2("Information"),
               p("Made by Phillip Hungerford. For more details visit my:", a("website", href="https://philliphungerford.github.io")),
