@@ -295,7 +295,7 @@ ui <- dashboardPage(
                     value =  format(date_latest, "%a %b %d"),
                     "Date updated",
                     icon = icon("calendar-o"),
-                    color = "blue",
+                    color = "red",
                     width=NULL)),
                 
                 column(width=3,
@@ -303,7 +303,7 @@ ui <- dashboardPage(
                     value =  date_latest - as.Date("2021-06-25"),
                     "Days since June 25th lockdown",
                     icon = icon("calendar-o"),
-                    color = "blue",
+                    color = "red",
                     width=NULL))
               ),
               
@@ -430,7 +430,6 @@ ui <- dashboardPage(
               
               h1("Date"),
               
-              
               fluidRow(
                 
                 column(width=3,
@@ -438,7 +437,7 @@ ui <- dashboardPage(
                          value =  format(date_latest, "%a %b %d"),
                          "Date updated",
                          icon = icon("calendar-o"),
-                         color = "blue",
+                         color = "green",
                          width=NULL)),
                 
                 column(width=3,
@@ -446,7 +445,7 @@ ui <- dashboardPage(
                          value =  date_latest - as.Date("2021-06-25"),
                          "Days since June 25th lockdown",
                          icon = icon("calendar-o"),
-                         color = "blue",
+                         color = "green",
                          width=NULL))
               ),
               
