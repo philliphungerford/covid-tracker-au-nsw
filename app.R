@@ -182,7 +182,7 @@ ui <- dashboardPage(
                 column(width=3,
                        valueBox(
                          value = round(dose_1st_90p_prediction,0),
-                         "Days until 90% first dose (based on 7d avg)",
+                         "Days until 90% first dose (prediction based on 7d avg)",
                          icon = icon("line-chart"),
                          color = row_1_col,
                          width = NULL))
@@ -221,7 +221,7 @@ ui <- dashboardPage(
                 column(width=3,
                        valueBox(
                          value = round(dose_2nd_80p_prediction,0),
-                         "Days until 80% double dose (based on 7d avg)",
+                         "Days until 80% double dose (prediction based on 7d avg)",
                          icon = icon("line-chart"),
                          color = row_1_col,
                          width = NULL))
@@ -270,7 +270,7 @@ ui <- dashboardPage(
                            
                            # Pass in Date objects
                            dateRangeInput("dateRange", "Date range:",
-                                          start = date_latest-7,
+                                          start = date_latest-6,
                                           end = date_latest,
                                           min = "2021-08-01",
                                           max = date_latest,
