@@ -56,6 +56,16 @@ while(is.na(df$doses_1st_24hr[df$date == date_latest_doses])){
 }
 
 #-----------------------------------------------------------------------------
+# Create rate variable
+
+# dose rate
+df <- df %>%
+  mutate(
+    dose_1st_rate = dose_1st_percent/lag(dose_1st_percent),
+    dose_2nd_rate = dose_2nd_percent/lag(dose_2nd_percent)
+  )
+
+#-----------------------------------------------------------------------------
 # rename variables for nicer look
 df_plot <- data.frame(df)
 new <- names(df_plot)
@@ -68,11 +78,20 @@ names(df_plot) <- new
 df_plot <- reshape2::melt(df_plot, id.var = "Date")
 df_plot$Date <- as.Date(df_plot$Date, format = "%Y-%m-%d")
 df_plot$variable <- as.factor(df_plot$variable)
-df_plot$value <- as.integer(df_plot$value)
+df_plot$value <- as.numeric(df_plot$value)
 
 # vaccine increase from previous date
 vaccinations_today <- df$doses_total_NSW[df$date == date_latest]
 vaccinations_yesterday <- df$doses_total_NSW[df$date == date_latest-1]
+
+# calculate the rate
+dose_1st_7d_rate <- round(mean(df$dose_1st_rate[df$date > (date_latest - 7)]),2)
+dose_2nd_7d_rate <- round(mean(df$dose_2nd_rate[df$date > (date_latest - 7)]),2)
+
+# based on current rate how many days until 80%? (Current % / rate)
+dose_1st_90p_prediction <- (90 - df$dose_1st_percent[df$date == date_latest])/dose_1st_7d_rate
+dose_2nd_80p_prediction <- (80 - df$dose_2nd_percent[df$date == date_latest])/dose_2nd_7d_rate
+
 
 # configuration
 df_vars <- colnames(df)
@@ -146,66 +165,66 @@ ui <- dashboardPage(
                 
                 column(width=3,
                        valueBox(
-                         value = df$num_new_cases[df$date == date_latest],
-                         "New local cases",
+                         value = paste0(df$dose_1st_percent[df$date == date_latest],"%"),
+                         "Have received their 1st Dose",
                          icon = icon("male"),
                          color = row_1_col,
                          width = NULL)),
                 
                 column(width=3,
                        valueBox(
-                         value = comma(sum(df$cases_20200125[which(df$date == date_latest)])),
-                         "Cases since pandemic",
+                         value = paste0(dose_1st_7d_rate,"%"),
+                         "1st Dose Daily Rate (7 day average)",
                          icon = icon("line-chart"),
                          color = row_1_col,
                          width = NULL)),
                 
                 column(width=3,
                        valueBox(
-                         value = comma(df$doses_total_NSW[df$date == date_latest]),
-                         "Total Vaccinations in NSW",
-                         icon = icon("medkit"),
+                         value = round(dose_1st_90p_prediction,0),
+                         "Days until 90% first dose (based on 7d avg)",
+                         icon = icon("line-chart"),
                          color = row_1_col,
                          width = NULL))
+                
                 ),
               
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               ## Row 2 - Second row of 4 boxes
               
               fluidRow(
-
-               column(width=3,
-                         valueBox(
-                           value = df$in_hospital[df$date == date_latest],
-                           "Currently in hospital",
-                           icon = icon("hospital-o"),
-                           color = row_2_col,
-                           width = NULL)),
-               
-               column(width=3,
-                       valueBox(
-                         value = df$icu[df$date == date_latest],
-                         "Currently in ICU",
-                         icon = icon("bed"),
-                         color = row_2_col,
-                         width = NULL)),
                 
-               column(width=3,
-                       # Ventilator
+                column(width=3,
                        valueBox(
-                         value = df$ventilator[df$date == date_latest],
-                         "Currently on a ventilator",
-                         icon = icon("heartbeat"),
-                         color = row_2_col,
+                         value =  format((date_latest + dose_2nd_80p_prediction), "%a %b %d"),
+                         "Predicted date until 80% double dose",
+                         icon = icon("line-chart"),
+                         color = row_1_col,
+                         width = NULL)),
+
+                column(width=3,
+                       valueBox(
+                         value = paste0(df$dose_2nd_percent[df$date == date_latest],"%"),
+                         "Have received their 2nd Dose",
+                         icon = icon("line-chart"),
+                         color = row_1_col,
                          width = NULL)),
                
-               column(width=3,
+                column(width=3,
                       valueBox(
-                        value = df$deaths[df$date == date_latest],
-                        "Total deaths",
-                        icon = icon("user-times"),
-                        color = row_2_col,
-                        width = NULL))
+                        value = paste0(dose_2nd_7d_rate,"%"),
+                        "2nd Dose Daily Rate (7 day average)",
+                        icon = icon("line-chart"),
+                        color = row_1_col,
+                        width = NULL)),
+               
+                column(width=3,
+                       valueBox(
+                         value = round(dose_2nd_80p_prediction,0),
+                         "Days until 80% double dose (based on 7d avg)",
+                         icon = icon("line-chart"),
+                         color = row_1_col,
+                         width = NULL))
                
                ),
               #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -219,6 +238,10 @@ ui <- dashboardPage(
                                        label = "Variable:", 
                                        choices = 
                                          list(
+                                           "Percent 1st Dose" = "Dose 1st Percent",
+                                           "Percent 2nd Dose" = "Dose 2nd Percent",
+                                           "Percent 1st Dose Rate" = "Dose 1st Rate",
+                                           "Percent 2nd Dose Rate" = "Dose 2nd Rate",
                                            "New Cases total (24hrs)" = "Total New Cases",
                                            "New local cases (24hrs)" = "Num New Cases",
                                            "Overseas Acquired (24hrs)" = "Overseas Acquired",
@@ -243,11 +266,11 @@ ui <- dashboardPage(
                                            "Doses: Second dose rate per 24hrs (NSW Health)" = "Doses 2nd 24hr",
                                            "Doses: Total dose rate in past 24hr (NSW Health)" = "Doses Total 24hr"
                                          ),
-                                       selected = c("Num New Cases","In Hospital") , width = NULL),
+                                       selected = c("Dose 1st Percent","Dose 2nd Percent") , width = NULL),
                            
                            # Pass in Date objects
                            dateRangeInput("dateRange", "Date range:",
-                                          start = date_latest-30,
+                                          start = date_latest-7,
                                           end = date_latest,
                                           min = "2021-08-01",
                                           max = date_latest,
