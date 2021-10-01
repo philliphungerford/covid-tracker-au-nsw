@@ -41,7 +41,7 @@ library(googlesheets4) # for reading data
 gsheet_link <- "https://docs.google.com/spreadsheets/d/1L9wrys7FT2FqWOhBSWbctMw0F_5GvllrnHdgo1C9Fdk/edit?usp=sharing"
 gs4_deauth()
 df <- read_sheet(gsheet_link)
-#df <- read.csv("data/covid_cases_nsw - Sheet1.csv")
+# df <- read.csv("data/covid-tracker-au-nsw-data - Sheet1.csv")
 df$date <- as.Date(df$date, format = "%Y-%m-%d")
 
 #-----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ date_earliest <- max(df$date)-13
 
 # dates for first and second doses are slow, so if current date is missing use previous dates data
 date_latest_doses <- date_latest
-while(is.na(df$doses_1st_24hr[df$date == date_latest_doses])){
+if(is.na(df$doses_1st_24hr[df$date == date_latest_doses])){
   date_latest_doses <- date_latest-1
 }
 
