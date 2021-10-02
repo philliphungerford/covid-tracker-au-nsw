@@ -119,7 +119,7 @@ ui <- dashboardPage(
                   tags$li(class="dropdown",
                           tags$a(href='https://github.com/philliphungerford/covid-tracker-au-nsw', icon('github'), "Source Code", target="_blank")),
                   tags$li(class="dropdown",
-                          tags$a(href='https://philliphungerford.github.io', icon('globe'), "Learn More", target="_blank"))
+                          tags$a(href='https://philliphungerford.com', icon('globe'), "Learn More", target="_blank"))
   ),
   #=========================================================================
   ## Sidebar content
@@ -238,10 +238,10 @@ ui <- dashboardPage(
                                        label = "Variable:", 
                                        choices = 
                                          list(
-                                           "Percent 1st Dose" = "Dose 1st Percent",
-                                           "Percent 2nd Dose" = "Dose 2nd Percent",
-                                           "Percent 1st Dose Rate" = "Dose 1st Rate",
-                                           "Percent 2nd Dose Rate" = "Dose 2nd Rate",
+                                           "% Received 1st Dose" = "Dose 1st Percent",
+                                           "% Received 2nd Dose" = "Dose 2nd Percent",
+                                           "1st Dose Rate" = "Dose 1st Rate",
+                                           "2nd Dose Rate" = "Dose 2nd Rate",
                                            "New Cases total (24hrs)" = "Total New Cases",
                                            "New local cases (24hrs)" = "Num New Cases",
                                            "Overseas Acquired (24hrs)" = "Overseas Acquired",
@@ -597,7 +597,7 @@ ui <- dashboardPage(
       # TAB 3: Information
       tabItem(tabName = "information",
               h2("Information"),
-              p("Made by Phillip Hungerford. For more details visit my:", a("website", href="https://philliphungerford.github.io")),
+              p("Made by Phillip Hungerford. For more details visit my:", a("website", href="https://philliphungerford.com")),
               p("If you would like to make a request, email me on phillip.hungerford@gmail.com")
       )
       #-----------------------------------------------------------------
