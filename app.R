@@ -266,11 +266,11 @@ ui <- dashboardPage(
                                            "Doses: Second dose rate per 24hrs (NSW Health)" = "Doses 2nd 24hr",
                                            "Doses: Total dose rate in past 24hr (NSW Health)" = "Doses Total 24hr"
                                          ),
-                                       selected = c("Dose 1st Percent","Dose 2nd Percent") , width = NULL),
+                                       selected = c("Num New Cases","In Hospital") , width = NULL),
                            
                            # Pass in Date objects
                            dateRangeInput("dateRange", "Date range:",
-                                          start = date_latest-6,
+                                          start = "2021-08-01",
                                           end = date_latest,
                                           min = "2021-08-01",
                                           max = date_latest,
