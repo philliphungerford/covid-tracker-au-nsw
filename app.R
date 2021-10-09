@@ -38,7 +38,8 @@ library(googlesheets4) # for reading data
 # LOAD DATA
 #=============================================================================
 #gs4_auth()
-gsheet_link <- "https://docs.google.com/spreadsheets/d/1L9wrys7FT2FqWOhBSWbctMw0F_5GvllrnHdgo1C9Fdk/edit?usp=sharing"
+#gsheet_link <- "https://docs.google.com/spreadsheets/d/1L9wrys7FT2FqWOhBSWbctMw0F_5GvllrnHdgo1C9Fdk/edit?usp=sharing"
+gsheet_link <- "https://docs.google.com/spreadsheets/d/1OVUpFGj9vXGbmGDAWMmTvwR6dLcE_8xNY0xw5LLG5nU/edit?usp=sharing"
 gs4_deauth()
 df <- read_sheet(gsheet_link)
 # df <- read.csv("data/covid-tracker-au-nsw-data - Sheet1.csv")
